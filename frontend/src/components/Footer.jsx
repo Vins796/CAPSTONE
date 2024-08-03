@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom"
+import ThemeController from "./ThemeController"
 
 export default function Component() {
   return (
@@ -10,7 +11,7 @@ export default function Component() {
             <span className="text-lg font-bold text-[#666]">Flour & Frosting</span>
           </Link>
           <p className="text-[#666666] text-sm">
-            La vostra amichevole panetteri di quartiere.
+            La vostra amichevole panetteria di quartiere.
           </p>
         </div>
         <div className="flex flex-col items-start gap-4">
@@ -25,6 +26,7 @@ export default function Component() {
             <Link to='/' className="text-[#666666] hover:text-[#FF6B6B]">
               <TwitterIcon className="w-6 h-6" />
             </Link>
+            <ThemeController />
           </nav>
         </div>
         <div className="flex flex-col items-start gap-4">
@@ -32,9 +34,6 @@ export default function Component() {
           <nav className="flex flex-col items-start gap-2">
             <Link to='/' className="text-[#666666] hover:text-[#eee]">
               Home
-            </Link>
-            <Link to='/about' className="text-[#666666] hover:text-[#eee]">
-              About
             </Link>
             <Link to='/products' className="text-[#666666] hover:text-[#eee]">
               Products
@@ -56,8 +55,8 @@ export default function Component() {
         <p className="text-[#666666] text-sm">&copy; 2024 Il Forno di Agostini. All rights reserved.</p>
         <p className="text-[#666666] text-sm mt-4 md:mt-0">
           Designed by{" "}
-          <Link to='/' className="text-[#C13584] hover:underline">
-            Vincenzo Barbarossa
+          <Link to='/' className="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 via-violet-600 to-purple-900 underline">
+            Vincenzo Perretta
           </Link>
         </p>
       </div>

@@ -3,11 +3,10 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 // PAGES
 import Home from "./pages/Home";
-
-// COMPONENTS
-import About from "./pages/About";
 import Products from "./pages/Products";
 import UserProfile from "./pages/UserProfile";
+import Dashboard from "./pages/Dashboard";
+import NotFound from "./pages/404";
 
 
 export default function App() {
@@ -16,9 +15,10 @@ export default function App() {
     <Router>
       <Routes>
         <Route path="/" element={<Home />}></Route>
-        <Route path="/about" element={<About />}></Route>
         <Route path="/products" element={<Products />}></Route>
         <Route path="/profile" element={<UserProfile />}></Route>
+        <Route path="/dashboard" element={<Dashboard />}></Route>
+        <Route path="/*" element={<NotFound />}></Route>
       </Routes>
     </Router>
   )

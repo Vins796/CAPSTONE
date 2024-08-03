@@ -1,18 +1,20 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Menu, X } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Bars3BottomLeftIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import logo from '/image.png';
-
-import LoginButton from './LoginButton';
-import LogoutButton from './LogoutButton';
-
+import avatarDefault from '/avatar.png'
 import { useAuth0 } from '@auth0/auth0-react';
 import axios from 'axios';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
-  const { isAuthenticated, getIdTokenClaims, loginWithRedirect, logout } = useAuth0();
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const { isAuthenticated, getIdTokenClaims, loginWithRedirect, logout, user } = useAuth0();
+  const [userInfo, setUserInfo] = useState(null); // Aggiungo uno stato per memorizzare le informazioni dell'utente dal backend
+  const navigate = useNavigate();
+  console.log(user);
 
   useEffect(() => {
     async function sendTokenToBackend() {
@@ -22,6 +24,7 @@ export default function Navbar() {
           const id_token = claims.__raw;
           const response = await axios.post('http://localhost:5001/api/auth/auth0-callback', { id_token });
           console.log('User synchronized with backend:', response.data);
+          setUserInfo(response.data.user);
         } catch (error) {
           console.error('Error syncing user with backend:', error);
         }
@@ -30,18 +33,53 @@ export default function Navbar() {
     sendTokenToBackend();
   }, [isAuthenticated, getIdTokenClaims]);
 
-  const menuItems = ['HOME', 'ABOUT', 'PRODUCTS', 'PROFILE'];
-
-  const AuthButton = () => {
-    if (isAuthenticated) {
-      return <button className='text-white' onClick={() => logout({ returnTo: window.location.origin })}>LOGOUT</button>;
+  const handleProfileClick = () => {
+    if (isAuthenticated && userInfo) {
+      // Assumiamo che l'informazione sul ruolo sia disponibile in user.role
+      if (userInfo.role === 'admin') {
+        navigate('/dashboard');
+      } else {
+        navigate('/profile');
+      }
     } else {
-      return <button className='text-white' onClick={() => loginWithRedirect()}>LOGIN</button>;
+      loginWithRedirect();
     }
   };
 
-  const { user } = useAuth0();
-  console.log(user);
+  const AuthButton = () => {
+    if (isAuthenticated && userInfo) {
+      return (
+        <div className="relative">
+          <button
+            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+            className="flex items-center space-x-2 text-white focus:outline-none"
+          >
+            <img
+              src={user?.picture || avatarDefault}
+              alt="User"
+              className="w-8 h-8 rounded-full"
+            />
+            <ChevronDown className="w-4 h-4" />
+          </button>
+          {isDropdownOpen && (
+            <div className="absolute left-0 mt-2 w-40 bg-gray-200 rounded-md shadow-lg text-left py-1 font-poppins">
+              <small className='text-gray-700 text-sm block px-4 py-2'>{user?.name}</small>             
+              <button onClick={handleProfileClick} className="block w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-gray-400">
+                {userInfo.role === 'admin' ? 'Dashboard' : 'Profile'}
+              </button>
+              <button onClick={() => logout({ returnTo: window.location.origin })} className="block w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-gray-100">Logout</button>
+            </div>
+          )}
+        </div>
+      );
+    } else {
+      return (
+        <button className='text-white flex items-center' onClick={() => loginWithRedirect()}>
+          <img src={avatarDefault} alt="Default Avatar" className="w-8 h-8 rounded-full mr-2" />
+        </button>
+      )
+    }
+  };
 
   return (
     <motion.nav 
@@ -51,107 +89,60 @@ export default function Navbar() {
       transition={{ duration: 0.5 }}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between md:justify-center">
-          <motion.div 
-            className="flex items-center md:hidden"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.2 }}
-          >
-            <Link to='/' className='text-white'>
-              <img src={logo} alt="Logo" className='h-12'/>
+        <div className="flex items-center justify-between">
+          <Link to='/' className='text-white'>
+            <img src={logo} alt="Logo" className='h-12'/>
+          </Link>
+          
+          <div className="hidden md:flex items-center space-x-4">
+            <Link to="/" className='text-white hover:text-[#eee] hover:border-b-[1px] px-3 py-2 font-poppins'>
+              HOME
             </Link>
-          </motion.div>
-          <motion.div 
-            className="hidden md:flex md:items-center md:space-x-4"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.2, staggerChildren: 0.1 }}
-          >
-            {menuItems.slice(0, 2).map((item, index) => (
-              <motion.div
-                key={item}
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 + index * 0.1 }}
-              >
-                <Link to={item === 'Home' ? '/' : `/${item.toLowerCase()}`} className='text-white hover:text-[#eee] hover:border-b-[1px] px-3 py-2 font-poppins'>
-                  {item}
-                </Link>
-              </motion.div>
-            ))}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.5 }}
-            >
-              <Link to='/' className='text-white'>
-                <img src={logo} alt="Logo" className='h-12 mx-4'/>
-              </Link>
-            </motion.div>
-            {menuItems.slice(2).map((item, index) => (
-              <motion.div
-                key={item}
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.6 + index * 0.1 }}
-              >
-                <Link to={`/${item.toLowerCase()}`} className='text-white hover:text-[#eee] hover:border-b-[1px] px-3 py-2 font-poppins'>
-                  {item}
-                </Link>
-              </motion.div>
-            ))}
+            <Link to="/products" className='text-white hover:text-[#eee] hover:border-b-[1px] px-3 py-2 font-poppins'>
+              PRODUCTS
+            </Link>
+            <button onClick={handleProfileClick} className='text-white hover:text-[#eee] hover:border-b-[1px] px-3 py-2 font-poppins'>
+              PROFILE
+            </button>
+          </div>
+          
+          <div className="hidden md:block">
             <AuthButton />
-          </motion.div>
-          <motion.div 
-            className="md:hidden"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.2 }}
-          >
+          </div>
+          
+          <div className="md:hidden">
             <button
               onClick={() => setIsOpen(!isOpen)}
-              type="button"
-              className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
-              aria-controls="mobile-menu"
-              aria-expanded="false"
+              className="text-white focus:outline-none"
             >
-              <span className="sr-only">Open main menu</span>
-              {isOpen ? (
-                <X className="block h-6 w-6" aria-hidden="true" />
-              ) : (
-                <Menu className="block h-6 w-6" aria-hidden="true" />
-              )}
+              {isOpen ? <XMarkIcon className="h-6 w-6" /> : <Bars3BottomLeftIcon className="h-6 w-6" />}
             </button>
-          </motion.div>
+          </div>
         </div>
       </div>
 
       <AnimatePresence>
         {isOpen && (
           <motion.div 
-            className="md:hidden" 
-            id="mobile-menu"
+            className="md:hidden min-h-screen" 
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.3 }}
+            transition={{ duration: 0.4 }}
           >
-            <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-              {menuItems.map((item, index) => (
-                <motion.div
-                  key={item}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -20 }}
-                  transition={{ delay: 0.1 * index }}
-                >
-                  <Link to={item === 'Home' ? '/' : `/${item.toLowerCase()}`} className='text-white hover:text-[#eee] block px-3 py-2 rounded-md'>
-                    {item}
-                  </Link>
-                </motion.div>
-              ))}
-              <AuthButton />
+            <div className="px-2 pt-2 pb-3 space-y-2">
+              <Link to="/" className='block text-white hover:text-[#eee] px-3 py-2 rounded-md'>
+                HOME
+              </Link>
+              <Link to="/products" className='block text-white hover:text-[#eee] px-3 py-2 rounded-md'>
+                PRODUCTS
+              </Link>
+              <button onClick={handleProfileClick} className='block text-white hover:text-[#eee] px-3 py-2 rounded-md w-full text-left'>
+                PROFILE
+              </button>
+              <div className="px-3 py-2">
+                <AuthButton />
+              </div>
             </div>
           </motion.div>
         )}

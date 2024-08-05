@@ -42,6 +42,7 @@ try {
     }
   }
   await user.save();
+  console.log('Token salvato:', localStorage.getItem('authToken'));
 
   // Genera il tuo JWT interno
   const token = await generateJWT(user);

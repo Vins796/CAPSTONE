@@ -18,6 +18,7 @@ export const authMiddleware = async (req, res, next) => {
     }
 
     req.user = user;  // Cambiato da author a user
+    console.log('Token ricevuto:', token);
     next();
   } catch (error) {
     res.status(401).send('Token non valido');

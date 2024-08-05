@@ -14,7 +14,7 @@ export default function Navbar() {
   const { isAuthenticated, getIdTokenClaims, loginWithRedirect, logout, user } = useAuth0();
   const [userInfo, setUserInfo] = useState(null); // Aggiungo uno stato per memorizzare le informazioni dell'utente dal backend
   const navigate = useNavigate();
-  console.log(user);
+  // console.log(user);
 
   useEffect(() => {
     async function sendTokenToBackend() {
@@ -23,7 +23,7 @@ export default function Navbar() {
           const claims = await getIdTokenClaims();
           const id_token = claims.__raw;
           const response = await axios.post('http://localhost:5001/api/auth/auth0-callback', { id_token });
-          console.log('User synchronized with backend:', response.data);
+          localStorage.setItem('authToken', response.data.token); // Salva il token
           setUserInfo(response.data.user);
         } catch (error) {
           console.error('Error syncing user with backend:', error);
@@ -45,6 +45,7 @@ export default function Navbar() {
       loginWithRedirect();
     }
   };
+  console.log(userInfo);
 
   const AuthButton = () => {
     if (isAuthenticated && userInfo) {
@@ -67,7 +68,15 @@ export default function Navbar() {
               <button onClick={handleProfileClick} className="block w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-gray-400">
                 {userInfo.role === 'admin' ? 'Dashboard' : 'Profile'}
               </button>
-              <button onClick={() => logout({ returnTo: window.location.origin })} className="block w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-gray-100">Logout</button>
+              <button 
+                onClick={() => {
+                  localStorage.removeItem('authToken'); // Rimuove il token dal localStorage
+                  logout({ returnTo: window.location.origin }); // Esegue il logout di Auth0
+                }} 
+                className="block w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-gray-100"
+              >
+                Logout
+              </button>
             </div>
           )}
         </div>

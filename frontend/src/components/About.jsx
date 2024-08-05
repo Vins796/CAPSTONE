@@ -20,7 +20,7 @@ export default function About() {
                 <div className='h-1 w-72 bg-gradient-to-r from-pink-500 via-violet-600 to-purple-900'></div>
             </div>
         </div>
-        <div className="container mx-auto py-8 md:py-16 px-4 bg-[#dbdbdbee]">
+        <div className="mx-auto py-8 md:py-16 px-4 bg-[#dbdbdbee] w-full">
           <div className="flex flex-col space-y-8">
 
             <div className='flex flex-row gap-8 justify-center items-center'>

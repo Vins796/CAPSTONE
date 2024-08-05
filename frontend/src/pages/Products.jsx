@@ -14,7 +14,7 @@ export default function Products() {
         className='min-h-screen bg-gradient-to-b from-[#0a0906] via-[#0f0d09] to-[#131210] flex flex-col justify-center items-center relative'
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, ease: "easeOut" }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
       >
         <img src={banner} alt="banner" className="absolute inset-0 w-full h-full object-cover object-center"/>
         <div className='absolute inset-0 bg-gradient-to-t from-black to-transparent'></div>

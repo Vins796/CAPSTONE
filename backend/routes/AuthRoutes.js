@@ -6,11 +6,23 @@ import User from '../models/Users.js';
 const router = express.Router();
 
 // Funzione per verificare se un'email è admin
+// In AuthRoutes.js
 const isAdminEmail = (email) => {
-  if (!email) return false; // Se l'email non è disponibile, non è admin
+  if (!email) return false;
   const adminEmail = process.env.ADMIN_EMAIL;
-  return email.toLowerCase() === adminEmail.toLowerCase();
+  console.log('Admin email from env:', adminEmail);
+  console.log('User email:', email);
+  const isAdmin = email.toLowerCase() === adminEmail.toLowerCase();
+  console.log('Is admin?', isAdmin);
+  return isAdmin;
 };
+
+router.get('/test-admin/:email', (req, res) => {
+  const { email } = req.params;
+  const isAdmin = isAdminEmail(email);
+  res.json({ email, isAdmin, adminEmail: process.env.ADMIN_EMAIL });
+});
+
 // Rotta per gestire il callback di Auth0 e creare/aggiornare l'utente nel tuo database
 router.post('/auth0-callback', async (req, res) => {
 try {
@@ -42,15 +54,24 @@ try {
     }
   }
   await user.save();
-  console.log('Token salvato:', localStorage.getItem('authToken'));
 
   // Genera il tuo JWT interno
   const token = await generateJWT(user);
 
+  console.log('Token salvato:', token);
+  console.log('Decoded token:', decodedToken);
+  console.log('User email:', userEmail);
+  console.log('Is admin?', isAdmin);
+  console.log('User found in DB:', user);
+
   res.json({ token, user: { id: user._id, email: user.email, role: user.role } });
 } catch (error) {
-  console.error("Errore durante l'autenticazione:", error);
-  res.status(500).json({ message: "Errore durante l'autenticazione", error: error.message });
+  console.error("Errore dettagliato durante l'autenticazione:", error);
+  res.status(500).json({ 
+    message: "Errore durante l'autenticazione", 
+    error: error.message,
+    stack: error.stack 
+  });
 }
 });
 

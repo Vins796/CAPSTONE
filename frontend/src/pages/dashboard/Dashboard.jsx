@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Sidebar from "./components/Sidebar";
 import Topbar from "./components/Topbar";
+import CustomersTable from "./components/CustomersTable";
 
 export default function Dashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -13,6 +14,7 @@ export default function Dashboard() {
         <main className="flex-1 overflow-x-hidden overflow-y-auto p-4">
           {/* Contenuto della dashboard */}
           <h1 className="text-2xl font-semibold">Dashboard Content</h1>
+          <CustomersTable />
         </main>
       </div>
     </div>

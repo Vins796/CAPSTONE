@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { Bars3BottomLeftIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -14,16 +14,20 @@ export default function Navbar() {
   const { isAuthenticated, getIdTokenClaims, loginWithRedirect, logout, user } = useAuth0();
   const [userInfo, setUserInfo] = useState(null); // Aggiungo uno stato per memorizzare le informazioni dell'utente dal backend
   const navigate = useNavigate();
-  // console.log(user);
+
+  const activeClass = "bg-gradient-to-r from-pink-500 via-violet-600 to-purple-900 bg-clip-text text-transparent";
+  const inactiveClass = "text-white hover:text-[#eee] hover:border-b-[1px] font-poppins"
+
 
   useEffect(() => {
     async function sendTokenToBackend() {
-      if (isAuthenticated) {
+      if (isAuthenticated && user) {
         try {
           const claims = await getIdTokenClaims();
           const id_token = claims.__raw;
           const response = await axios.post('http://localhost:5001/api/auth/auth0-callback', { id_token });
-          localStorage.setItem('authToken', response.data.token); // Salva il token
+          // console.log('Response from backend:', response.data);
+          localStorage.setItem('authToken', response.data.token);
           setUserInfo(response.data.user);
         } catch (error) {
           console.error('Error syncing user with backend:', error);
@@ -31,7 +35,7 @@ export default function Navbar() {
       }
     }
     sendTokenToBackend();
-  }, [isAuthenticated, getIdTokenClaims]);
+  }, [isAuthenticated, user, getIdTokenClaims]);
 
   const handleProfileClick = () => {
     if (isAuthenticated && userInfo) {
@@ -45,33 +49,35 @@ export default function Navbar() {
       loginWithRedirect();
     }
   };
-  console.log(userInfo);
+  // console.log(userInfo);
 
   const AuthButton = () => {
-    if (isAuthenticated && userInfo) {
+    if (isAuthenticated && user) {
       return (
         <div className="relative">
           <button
             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
             className="flex items-center space-x-2 text-white focus:outline-none"
           >
-            <img
-              src={user?.picture || avatarDefault}
-              alt="User"
-              className="w-8 h-8 rounded-full"
-            />
-            <ChevronDown className="w-4 h-4" />
+            {user?.picture && 
+              <img
+                src={user.picture}
+                alt="User"
+                className="w-8 h-8 rounded-full"
+              />
+            }
+            <ChevronDown className="w-6 h-4" />
           </button>
           {isDropdownOpen && (
-            <div className="absolute left-0 mt-2 w-40 bg-gray-200 rounded-md shadow-lg text-left py-1 font-poppins">
-              <small className='text-gray-700 text-sm block px-4 py-2'>{user?.name}</small>             
+            <div className="absolute left-0 mt-2 w-44 bg-gray-200 rounded-md shadow-lg text-left py-1 font-poppins">
+              <small className='text-gray-700 text-sm block px-4 py-2 w-full'>{user?.name}</small>             
               <button onClick={handleProfileClick} className="block w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-gray-400">
-                {userInfo.role === 'admin' ? 'Dashboard' : 'Profile'}
+                {userInfo?.role === 'admin' ? 'Dashboard' : 'Profile'}
               </button>
               <button 
                 onClick={() => {
-                  localStorage.removeItem('authToken'); // Rimuove il token dal localStorage
-                  logout({ returnTo: window.location.origin }); // Esegue il logout di Auth0
+                  localStorage.removeItem('authToken');
+                  logout({ returnTo: window.location.origin });
                 }} 
                 className="block w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-gray-100"
               >
@@ -99,20 +105,20 @@ export default function Navbar() {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between">
-          <Link to='/' className='text-white'>
+          <NavLink to='/' className='text-white'>
             <img src={logo} alt="Logo" className='h-12'/>
-          </Link>
+          </NavLink>
           
           <div className="hidden md:flex items-center space-x-4">
-            <Link to="/" className='text-white hover:text-[#eee] hover:border-b-[1px] px-3 py-2 font-poppins'>
+            <NavLink to="/" className={({ isActive }) => `px-3 py-2 font-poppins ${ isActive ? activeClass : inactiveClass }`}>
               HOME
-            </Link>
-            <Link to="/products" className='text-white hover:text-[#eee] hover:border-b-[1px] px-3 py-2 font-poppins'>
-              PRODUCTS
-            </Link>
-            <button onClick={handleProfileClick} className='text-white hover:text-[#eee] hover:border-b-[1px] px-3 py-2 font-poppins'>
+            </NavLink>
+            <NavLink to="/products" className={({ isActive }) => `px-3 py-2 font-poppins ${ isActive ? activeClass : inactiveClass }`}>
+              PRODOTTI
+            </NavLink>
+            <NavLink onClick={handleProfileClick} className={({ isActive }) => `px-3 py-2 font-poppins ${ isActive ? inactiveClass : activeClass }`}>
               PROFILE
-            </button>
+            </NavLink>
           </div>
           
           <div className="hidden md:block">
@@ -140,12 +146,12 @@ export default function Navbar() {
             transition={{ duration: 0.4 }}
           >
             <div className="px-2 pt-2 pb-3 space-y-2">
-              <Link to="/" className='block text-white hover:text-[#eee] px-3 py-2 rounded-md'>
+              <NavLink to="/" className='block text-white hover:text-[#eee] px-3 py-2 rounded-md'>
                 HOME
-              </Link>
-              <Link to="/products" className='block text-white hover:text-[#eee] px-3 py-2 rounded-md'>
+              </NavLink>
+              <NavLink to="/products" className='block text-white hover:text-[#eee] px-3 py-2 rounded-md'>
                 PRODUCTS
-              </Link>
+              </NavLink>
               <button onClick={handleProfileClick} className='block text-white hover:text-[#eee] px-3 py-2 rounded-md w-full text-left'>
                 PROFILE
               </button>

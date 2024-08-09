@@ -1,9 +1,8 @@
 import { useState } from 'react';
 import { ShoppingBagIcon } from "@heroicons/react/24/outline";
 import { motion, AnimatePresence } from 'framer-motion';
-import prod1 from '/prod1.jpg';
 
-export default function ProductsCard() {
+export default function ProductsCard({ product }) {
   const [isActive, setIsActive] = useState(false);
 
   const handleInteraction = () => {
@@ -19,8 +18,8 @@ export default function ProductsCard() {
       onTouchStart={handleInteraction}
     >
         <img 
-            src={prod1} 
-            alt="prod1"
+            src={`http://localhost:5001${product.image}`}
+            alt={product.name}
             className="absolute inset-0 w-full h-full object-cover"
         />
         <div className='absolute inset-0 bg-gradient-to-t from-black to-transparent'></div>
@@ -36,7 +35,7 @@ export default function ProductsCard() {
             >
               <h3 className="text-white text-lg font-bold font-poppins mb-2">Ingredienti:</h3>
               <p className="text-white text-sm font-poppins text-center">
-                Farina integrale, semi di girasole, semi di zucca, semi di lino, lievito madre, sale marino
+                {product.description}
               </p>
             </motion.div>
           )}
@@ -44,9 +43,10 @@ export default function ProductsCard() {
 
         <div className="flex justify-between items-center">
             <div className="absolute bottom-0 left-0 p-4 text-white z-10">
-                <h2 className="text-lg font-poppins">Pane ai cereali</h2>
+                <h2 className="text-lg font-poppins">{product.name}</h2>
             </div>
-            <div className="absolute bottom-0 right-0 p-4 text-white z-10">
+            <div className="absolute bottom-0 right-0 p-4 text-white z-10 flex items-center">
+                <span className="mr-4 font-poppins">{product.price} €</span>
                 <button><ShoppingBagIcon className="text-white size-4" /></button>
             </div>
         </div>

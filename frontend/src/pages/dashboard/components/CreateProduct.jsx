@@ -1,15 +1,8 @@
-import { useState } from 'react'
-import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react'
-import { motion } from 'framer-motion'
+import { useState } from 'react';
+import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react';
+import { motion } from 'framer-motion';
 
-export default function CreateProduct({ isOpen, setIsOpen, onCreateProduct }) {
-  const [productData, setProductData] = useState({
-    name: '',
-    description: '',
-    price: '',
-    category: '',
-    image: null
-  });
+export default function CreateProduct({ isOpen, setIsOpen, onCreateProduct, productData, setProductData }) {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -19,7 +12,6 @@ export default function CreateProduct({ isOpen, setIsOpen, onCreateProduct }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     onCreateProduct(productData);
-    setIsOpen(false);
   };
 
   return (

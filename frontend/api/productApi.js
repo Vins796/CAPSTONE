@@ -33,7 +33,7 @@ export const productApi = {
 
     createProduct: async (productData) => {
         try {
-          const token = getAuthToken();
+          const token = localStorage.getItem('authToken');
           const formData = new FormData();
           for (const key in productData) {
             formData.append(key, productData[key]);

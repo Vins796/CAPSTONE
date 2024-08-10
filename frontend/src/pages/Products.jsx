@@ -114,7 +114,7 @@ export default function Products() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
         >
-          <div className="flex flex-col lg:flex-row lg:justify-center lg:items-center lg:gap-20 space-y-5 py-4">
+          <div className="flex flex-col lg:flex-row lg:justify-center lg:items-center lg:gap-32 py-4">
             <div onClick={() => scrollToCategory('Pane')} className="flex flex-col justify-center items-center cursor-pointer">
               <img src={bread} className="size-24"/>
               <span className="text-black font-poppins">PANE</span>

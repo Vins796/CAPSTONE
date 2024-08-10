@@ -63,7 +63,7 @@ export default function Hero() {
             to="about-section" 
             smooth={true} 
             duration={500} 
-            offset={-70}
+            offset={-72}
           >
             <button className="bg-[#000] h-10 px-3 text-white font-poppins hover:shadow-lg">ABOUT</button>
           </ScrollLink>

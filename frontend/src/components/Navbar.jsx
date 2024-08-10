@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { Bars3BottomLeftIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { Bars3BottomLeftIcon, ShoppingCartIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import logo from '/image.png';
@@ -15,8 +15,19 @@ export default function Navbar() {
   const [userInfo, setUserInfo] = useState(null); // Aggiungo uno stato per memorizzare le informazioni dell'utente dal backend
   const navigate = useNavigate();
 
+  const ProfileLink = () => {
+    if (isAuthenticated && userInfo && userInfo.id) {
+      return (
+        <NavLink to="/profile/66b25be7618fa0dc29f9f1fc" className={({ isActive }) => `px-3 py-2 font-poppins ${isActive ? activeClass : inactiveClass}`}>
+          PROFILE
+        </NavLink>
+      );
+    }
+    return null;
+  };
+
   const activeClass = "bg-gradient-to-r from-pink-500 via-violet-600 to-purple-900 bg-clip-text text-transparent";
-  const inactiveClass = "text-white hover:text-[#eee] hover:border-b-[1px] font-poppins"
+  const inactiveClass = "text-white hover:text-[#eee] hover:border-b-[1px] font-poppins";
 
 
   useEffect(() => {
@@ -39,17 +50,20 @@ export default function Navbar() {
 
   const handleProfileClick = () => {
     if (isAuthenticated && userInfo) {
-      // Assumiamo che l'informazione sul ruolo sia disponibile in user.role
+      console.log("UserInfo in handleProfileClick:", userInfo);
       if (userInfo.role === 'admin') {
         navigate('/dashboard');
+      } else if (userInfo.id) {
+        navigate(`/profile/${userInfo.id}`, { replace: true });
       } else {
-        navigate('/profile');
+        console.error('ID utente non disponibile');
       }
     } else {
       loginWithRedirect();
     }
   };
-  // console.log(userInfo);
+
+  console.log(userInfo);
 
   const AuthButton = () => {
     if (isAuthenticated && user) {
@@ -116,12 +130,18 @@ export default function Navbar() {
             <NavLink to="/products" className={({ isActive }) => `px-3 py-2 font-poppins ${ isActive ? activeClass : inactiveClass }`}>
               PRODOTTI
             </NavLink>
-            <NavLink onClick={handleProfileClick} className={({ isActive }) => `px-3 py-2 font-poppins ${ isActive ? inactiveClass : activeClass }`}>
-              PROFILE
+            {userInfo?.role === 'admin' ? (
+              <NavLink to='/dashboard' onClick={handleProfileClick} className={({ isActive }) => `px-3 py-2 font-poppins ${ isActive ? activeClass : inactiveClass }`}>
+              DASHBOARD
             </NavLink>
+            ) : (
+              <ProfileLink />
+            )}
+            
           </div>
           
-          <div className="hidden md:block">
+          <div className="hidden md:flex md:gap-4 md:items-center">
+            <button><ShoppingCartIcon className='size-6 text-white'/></button>
             <AuthButton />
           </div>
           

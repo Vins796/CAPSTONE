@@ -3,14 +3,26 @@ import User from "../models/Users.js";
 import { authMiddleware, isAdmin } from '../middlewares/auth.js';
 import multer from "multer";
 import path from "path";
+import { fileURLToPath } from 'url';
+import fs from 'fs';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const uploadsDir = path.join(__dirname, '..', 'uploads');
+const profilesDir = path.join(uploadsDir, 'profiles');
+
+// Crea la sottocartella 'profiles' se non esiste
+if (!fs.existsSync(profilesDir)) {
+    fs.mkdirSync(profilesDir, { recursive: true });
+}
 
 // Configura Multer per il salvataggio locale
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-      cb(null, 'uploads/profiles/') // Assicurati che questa cartella esista
+        cb(null, profilesDir)
     },
     filename: function (req, file, cb) {
-      cb(null, 'profile-' + Date.now() + path.extname(file.originalname))
+        cb(null, 'profile-' + Date.now() + path.extname(file.originalname))
     }
 });
 
@@ -29,11 +41,15 @@ router.get('/', authMiddleware, isAdmin, async (req, res) => {
 });
 
 // GET /users/profile: Ottiene il profilo dell'utente loggato
-router.get('/profile', authMiddleware, async (req, res) => {
+router.get('/profile/:id', authMiddleware, async (req, res) => {
     try {
-        const user = await User.findById(req.user._id).select('-password');
+        const user = await User.findById(req.params.id).select('-password');
         if (!user) {
             return res.status(404).json({ message: "Utente non trovato" });
+        }
+        // Verifica che l'utente autenticato possa accedere a questo profilo
+        if (req.user.id !== user.id && req.user.role !== 'admin') {
+            return res.status(403).json({ message: "Non autorizzato" });
         }
         res.json(user);
     } catch(err) {
@@ -53,7 +69,7 @@ router.get('/profile', authMiddleware, async (req, res) => {
 // });
 
 // PUT /users/profile: Aggiorna il profilo dell'utente loggato
-router.put('/profile', authMiddleware, async (req, res) => {
+router.patch('/profile', authMiddleware, async (req, res) => {
     try {
         const updatedUser = await User.findByIdAndUpdate(req.user._id, req.body, { new: true }).select('-password');
         if (!updatedUser) {
@@ -68,22 +84,33 @@ router.put('/profile', authMiddleware, async (req, res) => {
 // PATCH /users/profile/image: Aggiorna l'immagine del profilo dell'utente
 router.patch('/profile/image', authMiddleware, upload.single('image'), async (req, res) => {
     try {
+        console.log("Richiesta di upload ricevuta");
+        console.log("File ricevuto:", req.file);
+
         if (!req.file) {
             return res.status(400).json({ message: "Nessuna immagine caricata" });
         }
 
+        const imagePath = `/uploads/profiles/${req.file.filename}`;
+        console.log("Percorso immagine salvato:", imagePath);
+
         const updatedUser = await User.findByIdAndUpdate(
             req.user._id,
-            { image: `/uploads/profiles/${req.file.filename}` },
+            { image: imagePath },
             { new: true }
         ).select('-password');
+
+        console.log("Utente aggiornato:", updatedUser);
 
         if (!updatedUser) {
             return res.status(404).json({ message: "Utente non trovato" });
         }
 
+        console.log("Immagine del profilo aggiornata per l'utente:", updatedUser._id);
+
         res.json(updatedUser);
     } catch (err) {
+        console.error("Errore nel salvataggio dell'immagine:", err);
         res.status(500).json({ message: err.message });
     }
 });

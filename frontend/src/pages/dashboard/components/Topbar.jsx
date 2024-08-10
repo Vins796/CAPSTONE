@@ -2,10 +2,41 @@ import { MoonIcon, UserIcon, MagnifyingGlassIcon, Bars2Icon, PlusIcon } from "@h
 import { useState } from "react";
 import CreateProduct from "./CreateProduct";
 import { productApi } from "../../../../api/productApi";
+import ConfirmAlert from "./ConfirmAlert";
 
 export default function Topbar({ onMenuButtonClick }) {
 
   const [isCreateProductOpen, setIsCreateProductOpen] = useState(false); // Stato per gestire l'apertura della modale
+  const [showAlert, setShowAlert] = useState(false); // Stato per mostrare l'alert di avvenuta creazione del prodotto
+
+  const [productData, setProductData] = useState({
+    name: '',
+    description: '',
+    price: '',
+    category: '',
+    image: null
+  });
+
+  const handleCreateProduct = async() => {
+    try {
+      const newProduct = await productApi.createProduct(productData);
+      console.log('New product created:', newProduct);
+      setIsCreateProductOpen(false);
+      setShowAlert(true);
+      // Nascondo l'alert dopo alcuni secondi
+      setTimeout(() => setShowAlert(false), 3000);
+      // Resetta i dati del prodotto dopo la creazione
+      setProductData({
+        name: '',
+        description: '',
+        price: '',
+        category: '',
+        image: null
+      });
+    } catch(error) {
+      console.error('Failed to create product:', error);
+    }
+  }
   return (
     <header className="shadow-sm">
       <div className="h-16 flex items-center justify-between px-4">
@@ -28,24 +59,13 @@ export default function Topbar({ onMenuButtonClick }) {
           <button onClick={() => setIsCreateProductOpen(true)}><PlusIcon className="text-gray-500 h-5 w-5"/></button>
           <button><UserIcon className="text-gray-500 h-5 w-5"/></button>
         </div>
+        {showAlert && <ConfirmAlert />}
         <CreateProduct 
           isOpen={isCreateProductOpen} 
           setIsOpen={setIsCreateProductOpen} 
-          onCreateProduct={async (productData) => {
-            try {
-              const newProduct = await productApi.createProduct(productData);
-              console.log('New product created:', newProduct);
-              // Aggiungi qui la logica per aggiornare l'UI o notificare l'utente del successo
-            } catch (error) {
-              if (error.message === 'User not authenticated' || error.message === 'Session expired or unauthorized') {
-                alert('Sessione scaduta o non autorizzato. Effettua nuovamente il login.');
-                // Qui dovresti reindirizzare l'utente alla pagina di login o refreshare il token
-              } else {
-                alert('Errore durante la creazione del prodotto. Riprova più tardi.');
-              }
-              console.error('Failed to create product:', error);
-            }
-          }}
+          onCreateProduct={handleCreateProduct}
+          productData={productData}
+          setProductData={setProductData}
         />
       </div>
     </header>

@@ -31,17 +31,17 @@ export default function About() {
             {timelineItems.map((item, index) => (
               <div key={item.year} className={`flex flex-col md:flex-row items-center mb-8 ${index % 2 !== 0 ? 'md:flex-row-reverse' : ''}`}>
                 <div className="flex-1 w-full md:w-1/2 mb-4 md:mb-0">
-                  <div className="bg-gradient-to-b from-zinc-900 via-neutral-900 to-stone-900 p-8 lg:p-12 rounded-lg shadow-xl">
+                  <div className="bg-[#0f0f0f] p-8 lg:p-12 rounded-lg shadow-xl">
                     <h2 className='font-bold font-poppins text-xl md:text-2xl text-transparent bg-clip-text bg-gradient-to-r from-pink-500 via-violet-600 to-purple-900'>{item.title}</h2>
                     <p className='text-white font-poppins font-light text-sm md:text-base'>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquam cumque iusto earum hic ad magnam a quae soluta aspernatur quia?</p>
                   </div>
                 </div>
                 <div className="flex flex-col items-center mx-4">
-                  <div className="w-1 h-24 bg-gray-300"></div>
+                  <div className="w-1 h-12 bg-gray-300"></div>
                   <div className="rounded-full bg-white p-2 my-2">
                     <CalendarIcon className='text-black w-6 h-6'/>
                   </div>
-                  <div className="w-1 h-24 bg-gray-300"></div>
+                  <div className="w-1 h-12 bg-gray-300"></div>
                 </div>
                 <div className="flex-1 w-full md:w-1/2 text-center md:text-right">
                   <span className='text-3xl font-bold bg-gradient-to-r from-slate-600 via-zinc-700 to-stone-900 bg-clip-text text-transparent'>{item.year}</span>

@@ -103,7 +103,7 @@ export default function Products() {
       
       {/* Card Container */}
       <motion.div
-        className='flex flex-col justify-center items-center relative'
+        className='flex flex-col justify-center items-center relative bg-[#0f0f0f]'
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, ease: "easeOut" }}
@@ -140,7 +140,7 @@ export default function Products() {
             <div key={category} ref={el => categoryRefs.current[category] = el} className="w-full mt-8">
               <h2 className="text-2xl text-left mb-2 uppercase font-poppins">{category}</h2>
               <div className="h-1 w-32 bg-gradient-to-r from-slate-300 via-gray-300 to-gray-400 mb-6"></div>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
                 {categoryProducts.map(product => (
                   <ProductsCard key={product._id} product={product} />
                 ))}

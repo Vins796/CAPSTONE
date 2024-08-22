@@ -65,7 +65,7 @@ export default function Hero() {
             duration={500} 
             offset={-72}
           >
-            <button className="bg-[#000] h-10 px-3 text-white font-poppins hover:shadow-lg">ABOUT</button>
+            <button className="bg-[#0f0f0f] h-10 px-3 text-white font-poppins hover:shadow-lg">ABOUT</button>
           </ScrollLink>
         </motion.div>
       </motion.section>

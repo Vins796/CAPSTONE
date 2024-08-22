@@ -3,7 +3,7 @@ import ThemeController from "./ThemeController"
 
 export default function Component() {
   return (
-    <footer className="bg-black py-10 md:py-16">
+    <footer className="bg-[#0f0f0f] py-10 md:py-16">
       <div className="container mx-auto px-4 md:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
         <div className="flex flex-col items-start gap-4">
           <Link to='/' className="flex items-center gap-2">

@@ -8,19 +8,24 @@ import UserProfile from "./pages/UserProfile";
 import Dashboard from "./pages/dashboard/Dashboard";
 import NotFound from "./pages/404";
 
+// CART CONTEXT
+import { CartProvider } from "./context/CartContext";
+
 
 export default function App() {
 
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Home />}></Route>
-        <Route path="/products" element={<Products />}></Route>
-        <Route path="/profile/:id" element={<UserProfile />} />
-        <Route path="/dashboard" element={<Dashboard />}></Route>
-        <Route path="/*" element={<NotFound />}></Route>
-      </Routes>
-    </Router>
+    <CartProvider>
+      <Router>
+        <Routes>
+          <Route path="/" element={<Home />}></Route>
+          <Route path="/products" element={<Products />}></Route>
+          <Route path="/profile/:id" element={<UserProfile />} />
+          <Route path="/dashboard" element={<Dashboard />}></Route>
+          <Route path="/*" element={<NotFound />}></Route>
+        </Routes>
+      </Router>
+    </CartProvider>
   )
 }
 

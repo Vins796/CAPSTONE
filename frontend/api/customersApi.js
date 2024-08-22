@@ -59,7 +59,7 @@ export const customersApi = {
           const token = getAuthToken();
           const formData = new FormData();
           formData.append('image', imageFile);
-    
+      
           const response = await axios.patch(`${API_URL}/users/profile/image`, formData, {
             headers: { 
               Authorization: `Bearer ${token}`,
@@ -69,7 +69,7 @@ export const customersApi = {
           console.log("Risposta dal server dopo l'upload:", response.data);
           return response.data;
         } catch (error) {
-          console.error("Errore nell'aggiornamento dell'immagine del profilo", error);
+          console.error("Errore nell'aggiornamento dell'immagine del profilo", error.response?.data || error.message);
           throw error;
         }
     }

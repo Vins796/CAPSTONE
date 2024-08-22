@@ -17,7 +17,7 @@ router.get('/', authMiddleware, isAdmin, async (req, res) => {
 // GET /orders/user: Ritorna gli ordini dell'utente loggato
 router.get('/user', authMiddleware, async (req, res) => {
     try {
-        const orders = await Order.find({ user: req.user._id });
+        const orders = await Order.find({ user: req.params.id });
         res.json(orders);
     } catch(err) {
         res.status(500).json({ message: err.message });
@@ -44,7 +44,7 @@ router.get('/:id', authMiddleware, async (req, res) => {
 // POST /orders: Crea un nuovo ordine
 router.post('/', authMiddleware, async (req, res) => {
     try {
-        const orderData = { ...req.body, user: req.user._id };
+        const orderData = { ...req.body, user: req.params.id };
         const order = new Order(orderData);
         const newOrder = await order.save();
         res.status(201).json(newOrder);

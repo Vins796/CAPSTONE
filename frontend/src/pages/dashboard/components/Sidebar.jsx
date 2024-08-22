@@ -4,7 +4,7 @@ import logo from '/image.png'
 
 export default function Sidebar({ isOpen, toggleSidebar }) {
   return (
-    <div className={`${isOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0 transform fixed md:relative inset-y-0 left-0 z-30 w-64 bg-gray-800 shadow-lg overflow-y-auto transition duration-300 ease-in-out`}>
+    <div className={`${isOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0 transform fixed md:relative inset-y-0 left-0 z-30 w-64 bg-[#0f0f0f] shadow-lg overflow-y-auto transition duration-300 ease-in-out`}>
       <div className="flex items-center justify-between h-16 shadow-sm px-4">
         <Link to="/" className="flex items-center gap-2 font-semibold">
           <img src={logo} alt="logo" className="h-8 w-8" />

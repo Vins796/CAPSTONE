@@ -24,17 +24,13 @@ export const customersApi = {
         }
     },
 
-    getProfile: async (id) => {
-        if (!id) {
-            throw new Error('ID utente non fornito');
-        }
+    getProfile: async () => {
         try {
             const token = getAuthToken();
-            // console.log("Requesting profile with ID:", id);
-            const response = await axios.get(`${API_URL}/users/profile/${id}`, {
+            const response = await axios.get(`${API_URL}/users/profile`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
-            return response.data; // Assicurati che questo sia l'oggetto profilo
+            return response.data;
         } catch(error) {
             console.error("Errore nella richiesta dei dati", error.response || error);
             throw error;
@@ -44,10 +40,10 @@ export const customersApi = {
     updateProfile: async (profileData) => {
         try {
             const token = getAuthToken();
-            const resposnse = await axios.patch(`${API_URL}/users/profile`, profileData, {
+            const response = await axios.patch(`${API_URL}/users/profile`, profileData, {
                 headers: { Authorization: `Bearer ${token}` }
             });
-            return resposnse.data;
+            return response.data;
         } catch(error) {
             console.error("Errore nella modifica utente", error);
             throw error;
@@ -56,21 +52,21 @@ export const customersApi = {
 
     updateProfileImage: async (imageFile) => {
         try {
-          const token = getAuthToken();
-          const formData = new FormData();
-          formData.append('image', imageFile);
-      
-          const response = await axios.patch(`${API_URL}/users/profile/image`, formData, {
-            headers: { 
-              Authorization: `Bearer ${token}`,
-              'Content-Type': 'multipart/form-data'
-            }
-          });
-          console.log("Risposta dal server dopo l'upload:", response.data);
-          return response.data;
+            const token = getAuthToken();
+            const formData = new FormData();
+            formData.append('image', imageFile);
+        
+            const response = await axios.patch(`${API_URL}/users/profile/image`, formData, {
+                headers: { 
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+            console.log("Risposta dal server dopo l'upload:", response.data);
+            return response.data;
         } catch (error) {
-          console.error("Errore nell'aggiornamento dell'immagine del profilo", error.response?.data || error.message);
-          throw error;
+            console.error("Errore nell'aggiornamento dell'immagine del profilo", error.response?.data || error.message);
+            throw error;
         }
-    }
+    },
 }

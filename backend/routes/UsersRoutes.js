@@ -41,6 +41,19 @@ router.get('/', authMiddleware, isAdmin, async (req, res) => {
 });
 
 // GET /users/profile: Ottiene il profilo dell'utente loggato
+router.get('/profile', authMiddleware, async (req, res) => {
+    try {
+        const user = await User.findById(req.user._id).select('-password');
+        if (!user) {
+            return res.status(404).json({ message: "Utente non trovato" });
+        }
+        res.json(user);
+    } catch(err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
+// GET /users/profile/:id: Ottiene il profilo di un utente specifico
 router.get('/profile/:id', authMiddleware, async (req, res) => {
     try {
         const user = await User.findById(req.params.id).select('-password');
@@ -48,7 +61,7 @@ router.get('/profile/:id', authMiddleware, async (req, res) => {
             return res.status(404).json({ message: "Utente non trovato" });
         }
         // Verifica che l'utente autenticato possa accedere a questo profilo
-        if (req.user.id !== user.id && req.user.role !== 'admin') {
+        if (req.user._id.toString() !== user._id.toString() && req.user.role !== 'admin') {
             return res.status(403).json({ message: "Non autorizzato" });
         }
         res.json(user);
@@ -99,8 +112,6 @@ router.patch('/profile/image', authMiddleware, upload.single('image'), async (re
             { image: imagePath },
             { new: true }
         ).select('-password');
-
-        console.log("Utente aggiornato:", updatedUser);
 
         if (!updatedUser) {
             return res.status(404).json({ message: "Utente non trovato" });

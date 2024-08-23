@@ -59,29 +59,21 @@ export default function UserProfile() {
   const [isLoading, setIsLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [isImageLoading, setIsImageLoading] = useState(false);
-  const [forceUpdate, setForceUpdate] = useState(false);
 
   // Funzione per recuperare i dati del profilo
-  const fetchProfile = useMemo(
-    () => async () => {
-      if (!id) {
-        setError("ID utente non disponibile");
-        setIsLoading(false);
-        return;
-      }
-      try {
-        setIsLoading(true);
-        const response = await customersApi.getProfile(id);
-        setProfile(response);
-        setEditedProfile(response);
-      } catch (error) {
-        setError("Si è verificato un errore nel caricamento del profilo");
-      } finally {
-        setIsLoading(false);
-      }
-    },
-    [id]
-  );
+  const fetchProfile = async () => {
+    try {
+      setIsLoading(true);
+      const response = await customersApi.getProfile();
+      setProfile(response);
+      setEditedProfile(response);
+    } catch (error) {
+      console.error("Errore nel caricamento del profilo:", error);
+      setError("Si è verificato un errore nel caricamento del profilo");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const fetchOrders = async () => {
     try {
@@ -90,7 +82,10 @@ export default function UserProfile() {
       console.log("Risposta avvenuta", response);
       setOrders(response);
     } catch (error) {
-      console.error("Errore nella richiesta degli ordini", error);
+      console.error(
+        "Errore nella richiesta degli ordini",
+        error.response?.data || error.message
+      );
     }
   };
 
@@ -98,7 +93,7 @@ export default function UserProfile() {
   useEffect(() => {
     fetchProfile();
     fetchOrders();
-  }, [fetchProfile, forceUpdate]);
+  }, []);
 
   const handleDeleteOrder = async (orderId) => {
     try {
@@ -128,9 +123,13 @@ export default function UserProfile() {
         );
         setProfile(updatedUser);
         setEditedProfile(updatedUser);
-        setForceUpdate((prev) => !prev);
+        console.log("Immagine del profilo aggiornata con successo");
       } catch (error) {
-        setError("Errore nel caricamento dell'immagine");
+        console.error("Errore nel caricamento dell'immagine:", error);
+        setError(
+          "Errore nel caricamento dell'immagine: " +
+            (error.response?.data?.message || error.message)
+        );
       } finally {
         setIsImageLoading(false);
       }
@@ -171,13 +170,12 @@ export default function UserProfile() {
                   <div>Caricamento...</div>
                 ) : profile.image ? (
                   <img
-                    src={`http://localhost:5001${
-                      profile.image
-                    }?t=${new Date().getTime()}`}
+                    src={`http://localhost:5001${profile.image}`}
                     alt="Profile"
                     className="w-full h-full object-cover rounded-full"
                     onError={(e) => {
-                      e.target.src = UserCircleIcon;
+                      console.error("Errore nel caricamento dell'immagine:", e);
+                      e.target.src = "path/to/fallback/image.jpg"; // Usa un'immagine di fallback
                     }}
                   />
                 ) : (
@@ -269,9 +267,7 @@ export default function UserProfile() {
           handleUpdateOrderStatus={handleUpdateOrderStatus}
         />
       ) : (
-        <p className="text-center">
-          Nessun ordine trovato o caricamento in corso...
-        </p>
+        <p className="text-center">Nessun ordine trovato.</p>
       )}
       <Footer />
     </>

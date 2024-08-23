@@ -17,7 +17,7 @@ export default function OrdersTable({
       <h2 className="text-center text-2xl font-poppins mb-5">I tuoi Ordini</h2>
 
       {/* Tabella per schermi più grandi */}
-      <div className="hidden md:block">
+      <div className="hidden md:block overflow-x-auto rounded-lg">
         <table className="min-w-full bg-[#0f0f0f]">
           <thead>
             <tr>
@@ -25,7 +25,7 @@ export default function OrdersTable({
               <th className="p-4 border-b border-[#2f353c] text-left">Data</th>
               <th className="p-4 border-b border-[#2f353c] text-left">Prodotti</th>
               <th className="p-4 border-b border-[#2f353c] text-left">Totale</th>
-              <th className="p-4 border-b border-[#2f353c] text-left"></th>
+              <th className="p-4 border-b border-[#2f353c] text-left">Azioni</th>
             </tr>
           </thead>
           <tbody>
@@ -38,21 +38,18 @@ export default function OrdersTable({
                 <td className="py-2 px-4 border-b border-[#2f353c]">
                   {order.items.map((item) => (
                     <div key={item._id}>
-                      {item.product.name || "Nome non disponibile"} x{" "}
-                      {item.quantity}
+                      {item.product?.name || "Nome non disponibile"} x {item.quantity}
                     </div>
                   ))}
                 </td>
                 <td className="py-2 px-4 border-b border-[#2f353c]">${order.total}</td>
                 <td className="py-2 px-4 border-b border-[#2f353c]">
-                  <div className="flex items-center">
-                    <button
-                      onClick={() => handleDeleteOrder(order._id)}
-                      className="text-red-500 hover:text-red-700 mr-2"
-                    >
-                      <TrashIcon className="h-5 w-5" />
-                    </button>
-                  </div>
+                  <button
+                    onClick={() => handleDeleteOrder(order._id)}
+                    className="text-red-500 hover:text-red-700 mr-2"
+                  >
+                    <TrashIcon className="h-5 w-5" />
+                  </button>
                 </td>
               </tr>
             ))}
@@ -63,23 +60,18 @@ export default function OrdersTable({
       {/* Lista per schermi più piccoli */}
       <div className="md:hidden px-5">
         {orders.map((order) => (
-          <div
-            key={order._id}
-            className="bg-[#0f0f0f] shadow rounded-lg mb-4 p-4"
-          >
+          <div key={order._id} className="bg-[#0f0f0f] shadow rounded-lg mb-4 p-4">
             <div className="mb-2">
               <span className="font-bold">ID Ordine:</span> {order._id}
             </div>
             <div className="mb-2">
-              <span className="font-bold">Data:</span>{" "}
-              {new Date(order.createdAt).toLocaleDateString()}
+              <span className="font-bold">Data:</span> {new Date(order.createdAt).toLocaleDateString()}
             </div>
             <div className="mb-2">
               <span className="font-bold">Prodotti:</span>
               {order.items.map((item) => (
                 <div key={item._id}>
-                  {item.product.name || "Nome non disponibile"} x{" "}
-                  {item.quantity}
+                  {item.product?.name || "Nome non disponibile"} x {item.quantity}
                 </div>
               ))}
             </div>

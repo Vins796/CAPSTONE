@@ -45,7 +45,7 @@ export default function Navbar() {
   };
 
   const activeClass =
-    "bg-gradient-to-r from-pink-500 via-violet-600 to-purple-900 bg-clip-text text-transparent";
+    "bg-gradient-to-r from-amber-900 via-amber-600 to-yellow-100 bg-clip-text text-transparent";
   const inactiveClass =
     "text-white hover:text-[#eee] hover:border-b-[1px] font-poppins";
 

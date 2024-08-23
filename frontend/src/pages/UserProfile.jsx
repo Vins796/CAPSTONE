@@ -1,6 +1,12 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { useParams } from "react-router-dom";
 import { customersApi } from "../../api/customersApi";
+import {
+  getUserOrders,
+  deleteOrder,
+  updateOrderStatus,
+} from "../../api/ordersApi";
+
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import {
@@ -9,6 +15,7 @@ import {
   CheckIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
+import OrdersTable from "../components/OrdersTable";
 
 // Componente per i campi del profilo
 const ProfileField = ({ label, value, isEditing, onChange, placeholder }) => {
@@ -46,6 +53,7 @@ export default function UserProfile() {
 
   // Stati per gestire i dati del profilo e lo stato dell'interfaccia
   const [profile, setProfile] = useState(null);
+  const [orders, setOrders] = useState([]);
   const [editedProfile, setEditedProfile] = useState(null);
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -75,10 +83,40 @@ export default function UserProfile() {
     [id]
   );
 
+  const fetchOrders = async () => {
+    try {
+      console.log("Richiesta degli ordini");
+      const response = await getUserOrders();
+      console.log("Risposta avvenuta", response);
+      setOrders(response);
+    } catch (error) {
+      console.error("Errore nella richiesta degli ordini", error);
+    }
+  };
+
   // Effetto per caricare il profilo all'avvio e quando forceUpdate cambia
   useEffect(() => {
     fetchProfile();
+    fetchOrders();
   }, [fetchProfile, forceUpdate]);
+
+  const handleDeleteOrder = async (orderId) => {
+    try {
+      await deleteOrder(orderId);
+      fetchOrders(); // Aggiorna la lista degli ordini dopo l'eliminazione
+    } catch (error) {
+      console.error("Errore nell'eliminazione dell'ordine", error);
+    }
+  };
+
+  const handleUpdateOrderStatus = async (orderId, newStatus) => {
+    try {
+      await updateOrderStatus(orderId, newStatus);
+      fetchOrders(); // Aggiorna la lista degli ordini dopo la modifica
+    } catch (error) {
+      console.error("Errore nell'aggiornamento dello stato dell'ordine", error);
+    }
+  };
 
   // Gestisce il cambio dell'immagine del profilo
   const handleImageChange = async (e) => {
@@ -123,7 +161,7 @@ export default function UserProfile() {
   return (
     <>
       <Navbar />
-      <div className="flex justify-center items-center px-5 pt-24 mb-10">
+      <div className="flex justify-center items-center px-5 pt-32">
         <div className="bg-[#0f0f0f] shadow-xl rounded-lg p-8 max-w-2xl w-full">
           {/* Sezione immagine profilo */}
           <div className="flex flex-col items-center space-y-5">
@@ -224,7 +262,17 @@ export default function UserProfile() {
       </div>
 
       {/* Sezione Ordini */}
-      <h2 className="text-center text-2xl font-poppins">Your Order</h2>
+      {orders.length > 0 ? (
+        <OrdersTable
+          orders={orders}
+          handleDeleteOrder={handleDeleteOrder}
+          handleUpdateOrderStatus={handleUpdateOrderStatus}
+        />
+      ) : (
+        <p className="text-center">
+          Nessun ordine trovato o caricamento in corso...
+        </p>
+      )}
       <Footer />
     </>
   );

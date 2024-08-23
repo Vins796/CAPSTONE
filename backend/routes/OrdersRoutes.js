@@ -17,7 +17,7 @@ router.get('/', authMiddleware, isAdmin, async (req, res) => {
 // GET /orders/user: Ritorna gli ordini dell'utente loggato
 router.get('/user', authMiddleware, async (req, res) => {
     try {
-        const orders = await Order.find({ user: req.params.id });
+        const orders = await Order.find({ user: req.user._id });
         res.json(orders);
     } catch(err) {
         res.status(500).json({ message: err.message });
@@ -44,11 +44,34 @@ router.get('/:id', authMiddleware, async (req, res) => {
 // POST /orders: Crea un nuovo ordine
 router.post('/', authMiddleware, async (req, res) => {
     try {
-        const orderData = { ...req.body, user: req.params.id };
+        console.log('Dati ricevuti:', req.body);
+        console.log('User ID:', req.user?._id);
+        const { items, total } = req.body;
+        if (!items || !Array.isArray(items) || items.length === 0) {
+            return res.status(400).json({ message: "Dati dell'ordine non validi" });
+        }
+        
+        if (!req.user || !req.user._id) {
+            return res.status(401).json({ message: "Utente non autenticato" });
+        }
+
+        const orderData = { 
+            user: req.user._id,
+            items: items.map(item => ({
+                product: item.product,
+                quantity: item.quantity,
+                price: item.price
+            })),
+            total
+        };
+        
+        console.log('Order data:', orderData);
+        
         const order = new Order(orderData);
         const newOrder = await order.save();
         res.status(201).json(newOrder);
     } catch(err) {
+        console.error('Errore dettagliato:', err);
         res.status(400).json({ message: err.message });
     }
 });

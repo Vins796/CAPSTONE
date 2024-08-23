@@ -61,3 +61,29 @@ export const getOrders = async () => {
       throw error;
     }
   };
+
+  export const deleteOrder = async (orderId) => {
+    const token = getAuthToken();
+    try {
+      const response = await axios.delete(`${API_URL}/orders/${orderId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Errore nell'eliminazione dell'ordine", error);
+      throw error;
+    }
+};
+
+export const updateOrderStatus = async (orderId, newStatus) => {
+    const token = getAuthToken();
+    try {
+      const response = await axios.put(`${API_URL}/orders/${orderId}`, { status: newStatus }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Errore nell'aggiornamento dello stato dell'ordine", error);
+      throw error;
+    }
+};

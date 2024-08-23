@@ -24,14 +24,14 @@ export const syncCart = async (cartItems) => {
 };
 
 export const checkout = async (cartItems) => {
-    const token = getAuthToken();
-    try {
-        const response = await axios.post(`${API_URL}/orders`, { items: cartItems }, {
-        headers: { Authorization: `Bearer ${token}` }
-        });
-        return response.data;
-    } catch (error) {
-        console.error("Errore durante il checkout", error);
-        throw error;
-    }
+  const token = getAuthToken();
+  try {
+      const response = await axios.post(`${API_URL}/orders`, cartItems, {
+          headers: { Authorization: `Bearer ${token}` }
+      });
+      return response.data;
+  } catch (error) {
+      console.error("Errore durante il checkout", error.response?.data || error.message);
+      throw error;
+  }
 };

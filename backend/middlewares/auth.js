@@ -17,7 +17,8 @@ export const authMiddleware = async (req, res, next) => {
       return res.status(401).send('Utente non trovato');
     }
 
-    req.user = user;  // Cambiato da author a user
+    req.user = user;
+    console.log(user._id);
     console.log('Token ricevuto:', token);
     next();
   } catch (error) {

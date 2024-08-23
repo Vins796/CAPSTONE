@@ -1,4 +1,5 @@
 import React, { createContext, useState, useContext } from 'react';
+import { checkout } from '../../api/cartApi';
 
 const CartContext = createContext();
 
@@ -29,8 +30,27 @@ export const CartProvider = ({ children }) => {
     );
   };
 
+  const processCheckout = async() => {
+    try {
+      const orderItems = cart.map(item => ({
+        product: item._id,
+        quantity: item.quantity,
+        price: item.price
+      }));
+      const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+      
+      console.log("Invio l'ordine", { items: orderItems, total });
+      const response = await checkout({ items: orderItems, total });
+      setCart([]);
+      return response;
+    } catch(error) {
+      console.error("Errore durante il checkout", error);
+      throw error;
+    }
+  };
+
   return (
-    <CartContext.Provider value={{ cart, addToCart, removeFromCart, updateQuantity }}>
+    <CartContext.Provider value={{ cart, addToCart, removeFromCart, updateQuantity, processCheckout }}>
       {children}
     </CartContext.Provider>
   );

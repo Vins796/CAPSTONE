@@ -89,4 +89,27 @@ router.put('/:id', authMiddleware, isAdmin, async (req, res) => {
     }
 });
 
+// DELETE /orders/:orderId: Elimina un ordine (solo per user)
+router.delete('/:orderId', authMiddleware, async (req, res) => {
+    try {
+        const orderId = req.params.orderId;
+        const userId = req.user._id;
+
+        // Trova l'ordine e verifica che appartenga all'utente corrente
+        const order = await Order.findOne({ _id: orderId, user: userId });
+
+        if (!order) {
+            return res.status(404).json({ message: 'Ordine non trovato o non autorizzato' });
+        }
+
+        // Elimina l'ordine
+        await Order.findByIdAndDelete(orderId);
+
+        res.json({ message: "Ordine eliminato con successo!" });
+    } catch (err) {
+        console.error("Errore nella cancellazione dell'ordine:", err);
+        res.status(500).json({ message: "Errore interno del server" });
+    }
+});
+
 export default router;

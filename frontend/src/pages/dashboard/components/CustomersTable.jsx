@@ -1,78 +1,59 @@
-import { customersApi } from "../../../../api/customersApi";
 import { useEffect, useState } from "react";
+import { customersApi } from "../../../../api/customersApi";
 import defaultAvatar from '/avatar.png'
 
+const CustomerCard = ({ customer }) => (
+  <div className="border-opacity-25 bg-[#0f0f0f] drop-shadow-lg shadow rounded-lg p-4 mb-4">
+    <div className="flex items-center gap-4 mb-3">
+      <img
+        src={customer.image || defaultAvatar}
+        alt={'Image' || defaultAvatar}
+        className="w-12 h-12 rounded-full text-[#7f848b]"
+      />
+      <div className="text-[#dbdee0]">
+        <h3 className="font-bold text-md">{customer.name}</h3>
+        <p className="text-sm text-[#7f848b]">{customer.email}</p>
+      </div>
+    </div>
+    <div className="text-sm text-[#dbdee0]">
+      <p><span className="font-semibold text-sm">Address:</span> <span className="text-[#7f848b]"> {customer.address || 'N/A'}</span></p>
+      <p><span className="font-semibold text-sm">Phone:</span> <span className="text-[#7f848b]"> {customer.phone || 'N/A'}</span></p>
+    </div>
+  </div>
+);
+
 export default function CustomersTable() {
+  const [customers, setCustomers] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-    const [customers, setCustomers] = useState([]);
-
+  useEffect(() => {
     const fetchCustomers = async () => {
-        try {
-            const response = await customersApi.getAllCustomers();
-            // console.log("Dati ricevuti da getAllCustomers:", response);
-            setCustomers(response);
-        } catch(error) {
-            console.error("Errore nella richiesta dei customers", error)
-        }
+      try {
+        setIsLoading(true);
+        const response = await customersApi.getAllCustomers();
+        setCustomers(response.filter(customer => customer.role === 'user'));
+      } catch(error) {
+        console.error("Error fetching customers:", error);
+        setError("Failed to load customers. Please try again later.");
+      } finally {
+        setIsLoading(false);
+      }
     };
+    fetchCustomers();
+  }, []);
 
-    useEffect(() => {
-        fetchCustomers();
-    }, [])
+  if (isLoading) return <div className="text-center py-4">Loading customers...</div>;
+  if (error) return <div className="text-center py-4 text-red-500">{error}</div>;
 
-    useEffect(() => {
-        // console.log("Stato customers aggiornato:", customers);
-    }, [customers]);
-
-    return (
-        <div className="overflow-x-auto">
-        <table className="table">
-            <thead>
-            <tr>
-                <th>Profile</th>
-                <th>Data</th>
-                <th>Address</th>
-                <th>Phone</th>
-            </tr>
-            </thead>
-            <tbody>
-                {customers
-                    .filter(customer => customer.role === 'user')
-                    .map((customer) => (
-                        <tr key={customer._id}>
-                            <td>
-                                <div className="flex items-center gap-3">
-                                    <div className="avatar">
-                                        <div className="mask mask-squircle h-12 w-12">
-                                            <img
-                                                src={customer.image || defaultAvatar }
-                                                alt="Avatar"
-                                            />
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <div className="font-bold space-y-1">
-                                            <p>{customer.name}</p>
-                                            <span className="badge badge-ghost badge-sm py-3">{customer.email}</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>
-                                {customer.name}
-                                <br />
-                                
-                            </td>
-                            <td>
-                                {customer.address?.city || 'undefined'}
-                            </td>
-                            <th>
-                                <span>{customers.phone || 'undefined'}</span>
-                            </th>
-                        </tr>
-                    ))}
-            </tbody>
-        </table>
-        </div>
-    );
+  return (
+    <div className="bg-[#141414] border border-white border-opacity-[10%] rounded-lg p-4">
+      <h2 className="text-2xl font-bold mb-4">Customers</h2>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {customers.map((customer) => (
+          <CustomerCard key={customer._id} customer={customer} />
+        ))}
+      </div>
+    </div>
+  );
 }

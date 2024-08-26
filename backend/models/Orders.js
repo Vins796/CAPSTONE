@@ -12,6 +12,10 @@ const OrderSchema = new mongoose.Schema({
       ref: 'Product',
       required: true
     },
+    productName: {
+      type: String,
+      required: true
+    },
     quantity: {
       type: Number,
       required: true,
@@ -36,5 +40,20 @@ const OrderSchema = new mongoose.Schema({
   timestamps: true,
   collection: 'orders'
 });
+
+// Aggiunge un metodo al modello per aggiornare un item
+OrderSchema.methods.updateItem = function(itemId, newQuantity) {
+  const item = this.items.id(itemId);
+  if (item) {
+    item.quantity = newQuantity;
+    this.total = this.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  }
+};
+
+// Aggiunge un metodo al modello per rimuovere un item
+OrderSchema.methods.removeItem = function(itemId) {
+  this.items = this.items.filter(item => item._id.toString() !== itemId);
+  this.total = this.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+};
 
 export default mongoose.model("Orders", OrderSchema);

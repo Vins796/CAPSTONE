@@ -10,10 +10,11 @@ const getAuthToken = () => {
     return token;
 };
 
-export const getOrderStats = async () => {
+export const getOrders = async () => {
   const token = getAuthToken();
   try {
-    const response = await axios.get(`${API_URL}/orders/stats`, {
+    // console.log("Faccio la richiesta degli ordini");
+    const response = await axios.get(`${API_URL}/orders`, {
       headers: { Authorization: `Bearer ${token}` }
     });
     return response.data;
@@ -22,3 +23,16 @@ export const getOrderStats = async () => {
     throw error;
   }
 };
+
+// export const getOrderStats = async () => {
+//   const token = getAuthToken();
+//   try {
+//     const response = await axios.get(`${API_URL}/orders/stats`, {
+//       headers: { Authorization: `Bearer ${token}` }
+//     });
+//     return response.data;
+//   } catch (error) {
+//     console.error("Errore nel recupero delle statistiche degli ordini", error);
+//     throw error;
+//   }
+// };

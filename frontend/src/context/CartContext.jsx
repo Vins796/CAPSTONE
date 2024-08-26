@@ -34,6 +34,7 @@ export const CartProvider = ({ children }) => {
     try {
       const orderItems = cart.map(item => ({
         product: item._id,
+        name: item.name,
         quantity: item.quantity,
         price: item.price
       }));

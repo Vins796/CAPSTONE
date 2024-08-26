@@ -1,10 +1,11 @@
 import express from "express";
 import Order from "../models/Orders.js";
+import Product from "../models/Products.js";
 import { authMiddleware, isAdmin } from '../middlewares/auth.js';
 
 const router = express.Router();
 
-// GET /orders: Ritorna tutti gli ordini (solo per admin)
+// GET /orders: Ritorna tutti gli ordini
 router.get('/', authMiddleware, isAdmin, async (req, res) => {
     try {
         const orders = await Order.find().populate('user', 'name email');
@@ -17,9 +18,23 @@ router.get('/', authMiddleware, isAdmin, async (req, res) => {
 // GET /orders/user: Ritorna gli ordini dell'utente loggato
 router.get('/user', authMiddleware, async (req, res) => {
     try {
-        const orders = await Order.find({ user: req.user._id });
-        res.json(orders);
+        const orders = await Order.find({ user: req.user._id })
+            .populate('items.product', 'name')
+            .exec();
+        
+        const ordersWithProductNames = orders.map(order => ({
+            ...order.toObject(),
+            items: order.items.map(item => ({
+                ...item,
+                id: item._id || item.product?._id || `temp-${Date.now()}-${Math.random()}`,
+                productName: item.productName || item.product?.name || "Nome non disponibile",
+                quantity: item.quantity
+            }))
+        }));
+
+        res.json(ordersWithProductNames);
     } catch(err) {
+        console.error("Errore nel recupero degli ordini:", err);
         res.status(500).json({ message: err.message });
     }
 });
@@ -59,6 +74,7 @@ router.post('/', authMiddleware, async (req, res) => {
             user: req.user._id,
             items: items.map(item => ({
                 product: item.product,
+                productName: item.name,
                 quantity: item.quantity,
                 price: item.price
             })),
@@ -89,7 +105,42 @@ router.put('/:id', authMiddleware, isAdmin, async (req, res) => {
     }
 });
 
-// DELETE /orders/:orderId: Elimina un ordine (solo per user)
+// DELETE /orders/:orderId/items/:itemId: Rimuove un articolo da un ordine
+router.delete('/:orderId/items/:itemId', authMiddleware, async (req, res) => {
+    try {
+      const { orderId, itemId } = req.params;
+      const userId = req.user._id;
+  
+      const order = await Order.findOne({ _id: orderId, user: userId });
+      if (!order) {
+        return res.status(404).json({ message: 'Ordine non trovato o non autorizzato' });
+      }
+  
+      const itemIndex = order.items.findIndex(item => 
+        item._id.toString() === itemId || item.product.toString() === itemId
+      );
+  
+      if (itemIndex === -1) {
+        return res.status(404).json({ message: 'Item non trovato nell\'ordine' });
+      }
+  
+      order.items.splice(itemIndex, 1);
+      order.total = order.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+      
+      if (order.items.length === 0) {
+        await Order.findByIdAndDelete(orderId);
+        return res.json({ message: 'Ordine eliminato completamente' });
+      } else {
+        await order.save();
+        res.json(order);
+      }
+    } catch (err) {
+      console.error("Errore nella rimozione dell'item:", err);
+      res.status(500).json({ message: "Errore interno del server" });
+    }
+});
+
+// DELETE /orders/:orderId: Elimina un intero ordine (solo per user)
 router.delete('/:orderId', authMiddleware, async (req, res) => {
     try {
         const orderId = req.params.orderId;

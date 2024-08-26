@@ -1,33 +1,39 @@
+import React, { useState } from 'react';
 import { useCart } from "../context/CartContext";
 import { TrashIcon } from "@heroicons/react/24/outline";
 import { XIcon } from "lucide-react";
-import { useState } from 'react';
+import { useAuth0 } from "@auth0/auth0-react";
+import ConfirmationModal from './ConfirmationModal';
 import { useNavigate } from 'react-router-dom';
 
 export default function Cart({ isCartOpen, closeCart }) {
-  
-  const navigate = useNavigate();
   const { cart, removeFromCart, updateQuantity, processCheckout } = useCart();
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [error, setError] = useState(null);
+  const { isAuthenticated, loginWithRedirect } = useAuth0();
+  const [isConfirmationOpen, setIsConfirmationOpen] = useState(false);
+
+  const navigate = useNavigate();
 
   if (!isCartOpen) return null;
 
   const handleCheckout = async () => {
-    setIsProcessing(true);
-    setError(null);
-    try {
-      const result = await processCheckout();
-      console.log('Ordine completato:', result);
-      alert("Ordine inviato");
-      closeCart();
-      navigate('/');
-    } catch (err) {
-      setError('Si è verificato un errore durante il checkout. Riprova più tardi.');
-      console.error('Errore dettagliato:', err);
-    } finally {
-      setIsProcessing(false);
+    if (!isAuthenticated) {
+      loginWithRedirect();
+      return;
     }
+    
+    try {
+      await processCheckout();
+      setIsConfirmationOpen(true);
+      navigate('/profile/:id');
+    } catch (err) {
+      alert("Si è verificato un errore durante il checkout. Riprova più tardi.");
+      console.error('Errore dettagliato:', err);
+    }
+  };
+
+  const handleConfirmationClose = () => {
+    setIsConfirmationOpen(false);
+    closeCart();
   };
 
   return (
@@ -54,15 +60,18 @@ export default function Cart({ isCartOpen, closeCart }) {
         <div className="mt-5">
           <h3 className="text-xl font-bold">Totale: € {cart.reduce((total, item) => total + (item.price * item.quantity), 0).toFixed(2)}</h3>
           <button 
-            onClick={handleCheckout} 
-            disabled={isProcessing || cart.length === 0}
-            className={`bg-[#ffd814] hover:bg-[#b49e31] rounded-lg text-black w-2/3 p-1 text-sm mt-3 ${isProcessing ? 'opacity-50 cursor-not-allowed' : ''}`}
+            onClick={handleCheckout}
+            disabled={cart.length === 0}
+            className="bg-[#ffd814] hover:bg-[#b49e31] rounded-lg text-black w-2/3 p-1 text-sm mt-3"
           >
-            {isProcessing ? 'Elaborazione...' : "Procedi all'ordine"}
+            Procedi all'ordine
           </button>
-          {error && <p className="text-red-500 mt-2">{error}</p>}
         </div>
       </div>
+      <ConfirmationModal 
+        isOpen={isConfirmationOpen} 
+        onClose={handleConfirmationClose} 
+      />
     </>
   );
 }

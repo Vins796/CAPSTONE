@@ -54,10 +54,11 @@ export default function Topbar({ onMenuButtonClick }) {
             <MagnifyingGlassIcon className="text-gray-500 h-5 w-5 hidden md:block"/>
           </button>
         </div>
-        <div className="flex items-center gap-4">
-          <button><MoonIcon className="text-gray-500 h-5 w-5"/></button>
-          <button onClick={() => setIsCreateProductOpen(true)}><PlusIcon className="text-gray-500 h-5 w-5"/></button>
-          <button><UserIcon className="text-gray-500 h-5 w-5"/></button>
+        <div className="flex items-center cursor-pointer text-gray-500" onClick={() => setIsCreateProductOpen(true)}>
+          {/* <button><MoonIcon className="text-gray-500 h-5 w-5"/></button> */}
+          <PlusIcon className="h-5 w-5"/>
+          <span className="ml-1 hidden md:block"> Nuovo prodotto</span>
+          {/* <button><UserIcon className="text-gray-500 h-5 w-5"/></button> */}
         </div>
         {showAlert && <ConfirmAlert />}
         <CreateProduct 

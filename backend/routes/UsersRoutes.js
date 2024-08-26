@@ -40,6 +40,16 @@ router.get('/', authMiddleware, isAdmin, async (req, res) => {
     }
 });
 
+// GET /dashboard: Ottiene tutti i dati utenti da leggere per la dashboard
+router.get('/dashboard', authMiddleware, isAdmin, async (req, res) => {
+    try {
+        const users = await User.find().select('_id name email');
+        res.json(users);
+    } catch(err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
 // GET /users/profile: Ottiene il profilo dell'utente loggato
 router.get('/profile', authMiddleware, async (req, res) => {
     try {

@@ -1,13 +1,23 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
 import Sidebar from "./components/Sidebar";
 import Topbar from "./components/Topbar";
 import CustomersTable from "./components/CustomersTable";
-import { getOrders, getOrderStats } from "../../../api/ordersApi";
-import { Package } from "lucide-react";
+import { getOrders } from "../../../api/ordersApi";
+import { ChevronDown, ChevronUp, Package } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import UserRegistrationChart from "./components/UserRegistrationChart";
+import OrdersBarChart from "./components/OrdersBarChart";
 
+// Componente per la card dell'ordine
 const OrderCard = ({ order }) => (
-  <div className="bg-[#0f0f0f] rounded-lg shadow-lg overflow-hidden">
+  <motion.div 
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    exit={{ opacity: 0, y: -20 }}
+    transition={{ duration: 0.3 }}
+    className="bg-[#0f0f0f] rounded-lg shadow-lg overflow-hidden"
+  >
+    {/* Intestazione della card */}
     <div className="bg-gradient-to-r from-blue-500 via-blue-600 to-blue-800 text-white px-6 py-4 flex items-center justify-between">
       <div className="flex items-center gap-2">
         <Package className="h-5 w-5" />
@@ -17,6 +27,7 @@ const OrderCard = ({ order }) => (
         {order.status}
       </div>
     </div>
+    {/* Contenuto della card */}
     <div className="px-6 py-5 space-y-4">
       <div className="flex items-center justify-between">
         <span className="text-gray-500">Total</span>
@@ -30,31 +41,28 @@ const OrderCard = ({ order }) => (
       </div>
       <div className="flex items-center justify-between">
         <span className="text-gray-500">Customer</span>
-        <Link to={`/customers/${order.user}`} className="text-blue-600 hover:underline">
-          View Customer
-        </Link>
+        <span className="text-blue-600">{order.user.name}</span>
       </div>
     </div>
-  </div>
+  </motion.div>
 );
 
+// Componente principale Dashboard
 export default function Dashboard() {
+  // Stati del componente
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [orders, setOrders] = useState([]);
-  const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showAllOrders, setShowAllOrders] = useState(false);
 
+  // Effetto per caricare i dati all'avvio del componente
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
         setLoading(true);
-        const [ordersData, statsData] = await Promise.all([
-          getOrders(),
-          // getOrderStats()
-        ]);
+        const ordersData = await getOrders();
         setOrders(ordersData);
-        setStats(statsData);
       } catch (err) {
         setError("Errore nel caricamento dei dati degli ordini");
         console.error(err);
@@ -66,35 +74,80 @@ export default function Dashboard() {
     fetchDashboardData();
   }, []);
 
+  // Funzione per alternare la visualizzazione di tutti gli ordini
+  const toggleOrdersDisplay = () => setShowAllOrders(!showAllOrders);
+
+  // Filtro per gli ordini da visualizzare
+  const displayedOrders = showAllOrders ? orders : orders.slice(0, 3);
+
   return (
     <div className="flex h-screen overflow-hidden bg-[#0f0f0f]">
+      {/* Sidebar */}
       <Sidebar isOpen={sidebarOpen} toggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
+      
       <div className="flex flex-col flex-1 overflow-hidden">
+        {/* Topbar */}
         <Topbar onMenuButtonClick={() => setSidebarOpen(!sidebarOpen)} />
 
+        {/* Contenuto principale */}
         <main className="flex-1 overflow-x-hidden overflow-y-auto p-4">          
-          {loading && <p className="text-gray-700">Caricamento dati...</p>}
+          {/* Gestione dello stato di caricamento e errori */}
+          {loading && <p className="text-gray-300">Caricamento dati...</p>}
           {error && <p className="text-red-500">{error}</p>}
 
+          {/* Contenuto della dashboard */}
           {!loading && !error && (
             <>
-              {stats && (
-                <div className="bg-white p-4 rounded-lg shadow mb-4">
-                  <h2 className="text-xl font-semibold text-gray-800 mb-2">Statistiche</h2>
-                  <p className="text-gray-600">Vendite totali: €{stats.totalSales.toFixed(2)}</p>
-                  <p className="text-gray-600">Numero totale di ordini: {stats.orderCount}</p>
-                </div>
-              )}
-
+              {/* Sezione ordini */}
               <div className="mb-6 bg-[#131313] p-4 rounded-lg border border-white border-opacity-[10%]">
                 <h2 className="text-2xl font-semibold text-[#dadada] mb-4">Ordini Recenti</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {orders.slice(0, 6).map(order => (
-                    <OrderCard key={order._id} order={order} />
-                  ))}
-                </div>
-              </div>        
-              <CustomersTable />             
+                
+                {/* Griglia degli ordini con animazione */}
+                <motion.div
+                  className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+                >
+                  <AnimatePresence>
+                    {displayedOrders.map(order => (
+                      <OrderCard key={order._id} order={order} />
+                    ))}
+                  </AnimatePresence>
+                </motion.div>
+
+                {/* Pulsante "Mostra più/meno" */}
+                {orders.length > 3 && (
+                  <motion.div 
+                    className="mt-4 text-center"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.3, duration: 0.3 }}
+                  >
+                    <button
+                      onClick={toggleOrdersDisplay}
+                      className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded inline-flex items-center"
+                    >
+                      {showAllOrders ? (
+                        <>
+                          <span>Mostra meno</span>
+                          <ChevronUp className="ml-2 h-4 w-4" />
+                        </>
+                      ) : (
+                        <>
+                          <span>Mostra tutti</span>
+                          <ChevronDown className="ml-2 h-4 w-4" />
+                        </>
+                      )}
+                    </button>
+                  </motion.div>
+                )}
+              </div>
+
+              {/* Tabella dei clienti */}
+              <CustomersTable />
+              {/* Sezione grafici */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <UserRegistrationChart /> 
+                <OrdersBarChart />  
+              </div>
             </>
           )}
         </main>

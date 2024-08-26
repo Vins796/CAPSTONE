@@ -24,6 +24,19 @@ export const customersApi = {
         }
     },
 
+    getDashboardCustomers: async () => {
+        try {
+            const token = getAuthToken();
+            const response = await axios.get(`${API_URL}/users/dashboard`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            return response.data;
+        } catch(error) {
+            console.error("Errore nell'ottenimento dei dati leggeri dei customers per la dashboard", error);
+            throw error;
+        }
+    },
+
     getProfile: async () => {
         try {
             const token = getAuthToken();

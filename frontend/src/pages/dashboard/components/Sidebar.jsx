@@ -15,9 +15,9 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
         </button>
       </div>
       <nav className="mt-5 px-4">
-        <Link to="/dashboard" className="group flex items-center px-2 py-2 text-base leading-6 font-medium rounded-md text-[#7f848b] hover:bg-gray-50 hover:text-gray-900 transition ease-in-out duration-150">
+        <Link to="/" className="group flex items-center px-2 py-2 text-base leading-6 font-medium rounded-md text-[#7f848b] hover:bg-gray-50 hover:text-gray-900 transition ease-in-out duration-150">
           <HomeIcon className="mr-4 h-6 w-6 text-gray-400 group-hover:text-gray-500" />
-          Dashboard
+          Home
         </Link>
         <Link to="/orders" className="mt-1 group flex items-center px-2 py-2 text-base leading-6 font-medium rounded-md text-[#7f848b] hover:bg-gray-50 hover:text-gray-900 transition ease-in-out duration-150">
           <ShoppingBagIcon className="mr-4 h-6 w-6 text-gray-400 group-hover:text-gray-500" />

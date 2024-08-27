@@ -144,7 +144,7 @@ export default function Dashboard() {
               {/* Tabella dei clienti */}
               <CustomersTable />
               {/* Sezione grafici */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <div className="grid grid-cols-1 md:grid-cols-2 md:gap-5">
                 <UserRegistrationChart /> 
                 <OrdersBarChart />  
               </div>

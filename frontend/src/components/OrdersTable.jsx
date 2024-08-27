@@ -52,7 +52,7 @@ export default function OrdersTable({ orders, handleDeleteOrder, handleRemoveOrd
   // Rendering principale
   return (
     <div className="container mx-auto my-14">
-      <h2 className="text-center text-2xl font-poppins mb-5">I tuoi Ordini</h2>
+      <h2 className="text-center text-2xl mb-5">I tuoi Ordini</h2>
 
       {/* Tabella per schermi più grandi */}
       <div className="hidden md:block overflow-x-auto rounded-lg">

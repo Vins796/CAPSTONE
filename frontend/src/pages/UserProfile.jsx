@@ -126,7 +126,7 @@ export default function UserProfile() {
   return (
     <>
       <Navbar />
-      <div className="flex justify-center items-center px-5 pt-[84px]">
+      <div className="flex justify-center items-center px-5 pt-[84px] md:pt-24">
         <div className="bg-[#0f0f0f] shadow-xl rounded-lg p-8 max-w-2xl w-full">
           {/* Sezione immagine profilo */}
           <div className="flex flex-col items-center space-y-5">
@@ -204,15 +204,20 @@ export default function UserProfile() {
 
       {/* Sezione Ordini */}
       {orders.length > 0 ? (
-        <OrdersTable
-          orders={orders}
-          handleDeleteOrder={handleDeleteOrder}
-          handleRemoveOrderItem={handleRemoveOrderItem}
-        />
+        <>
+          <OrdersTable
+            orders={orders}
+            handleDeleteOrder={handleDeleteOrder}
+            handleRemoveOrderItem={handleRemoveOrderItem}
+          />
+          <div className="text-center mb-10">
+            <Link to='/products' className="text-[#3b82f6] hover:underline">Effettua un ordine</Link>
+          </div>
+        </>
       ) : (
         <div className="text-center p-20 md:p-40 space-y-5">
-          <p>Nessun ordine trovato.</p>
-          <p className="underline text-[#3b82f6]"><Link to='/products'>Effettua un ordine</Link></p>
+          <p className="mb-2">Nessun ordine trovato.</p>
+          <Link to='/products' className="underline text-[#3b82f6]">Effettua un ordine</Link>
         </div>
       )}
       <Footer />

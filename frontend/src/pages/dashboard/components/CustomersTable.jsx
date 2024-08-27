@@ -2,25 +2,40 @@ import { useEffect, useState } from "react";
 import { customersApi } from "../../../../api/customersApi";
 import defaultAvatar from '/avatar.png'
 
-const CustomerCard = ({ customer }) => (
-  <div className="border-opacity-25 bg-[#0f0f0f] drop-shadow-lg shadow rounded-lg p-4 mb-4">
-    <div className="flex items-center gap-4 mb-3">
-      <img
-        src={customer.image || defaultAvatar}
-        alt={'Image' || defaultAvatar}
-        className="w-12 h-12 rounded-full text-[#7f848b]"
-      />
-      <div className="text-[#dbdee0]">
-        <h3 className="font-bold text-md">{customer.name}</h3>
-        <p className="text-sm text-[#7f848b]">{customer.email}</p>
+const API_URL = 'http://localhost:5001';
+
+const CustomerCard = ({ customer }) => {
+  // Devo costruirmi l'url dell'immagine per poterla leggere nel frontend
+  // Contrariamente mi restituiva sempre undefined
+  const imageUrl = customer.image 
+    ? `${API_URL}${customer.image}` 
+    : defaultAvatar;
+
+  return (
+    <div className="border-opacity-25 bg-[#0f0f0f] drop-shadow-lg shadow rounded-lg p-4 mb-4">
+      <div className="flex items-center gap-4 mb-3">
+        <img
+          src={imageUrl}
+          alt={customer.name || 'Customer'}
+          className="w-12 h-12 rounded-full text-[#7f848b]"
+          onError={(e) => {
+            // Gestione dell'errore nel caso l'immagine non possa essere caricata
+            e.target.onerror = null; // previene loop infiniti
+            e.target.src = defaultAvatar;
+          }}
+        />
+        <div className="text-[#dbdee0]">
+          <h3 className="font-bold text-md">{customer.name}</h3>
+          <p className="text-sm text-[#7f848b]">{customer.email}</p>
+        </div>
+      </div>
+      <div className="text-sm text-[#dbdee0]">
+        <p><span className="font-semibold text-sm">Address:</span> <span className="text-[#7f848b]"> {customer.address || 'N/A'}</span></p>
+        <p><span className="font-semibold text-sm">Phone:</span> <span className="text-[#7f848b]"> {customer.phone || 'N/A'}</span></p>
       </div>
     </div>
-    <div className="text-sm text-[#dbdee0]">
-      <p><span className="font-semibold text-sm">Address:</span> <span className="text-[#7f848b]"> {customer.address || 'N/A'}</span></p>
-      <p><span className="font-semibold text-sm">Phone:</span> <span className="text-[#7f848b]"> {customer.phone || 'N/A'}</span></p>
-    </div>
-  </div>
-);
+  );
+};
 
 export default function CustomersTable() {
   const [customers, setCustomers] = useState([]);

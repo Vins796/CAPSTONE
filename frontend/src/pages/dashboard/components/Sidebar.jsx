@@ -29,7 +29,7 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
         </Link>
         <Link to="/analytics" className="mt-1 group flex items-center px-2 py-2 text-base leading-6 font-medium rounded-md text-[#7f848b] hover:bg-gray-50 hover:text-gray-900 transition ease-in-out duration-150">
           <ChartBarIcon className="mr-4 h-6 w-6 text-gray-400 group-hover:text-gray-500" />
-          Analytics
+          Charts
         </Link>
       </nav>
     </div>

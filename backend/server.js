@@ -50,6 +50,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(cors());
 app.use(helmet());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Configurazione Auth0
 const auth0Strategy = new Auth0Strategy(

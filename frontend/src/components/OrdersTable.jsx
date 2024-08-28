@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { TrashIcon } from "@heroicons/react/24/outline";
 import DeleteModal from "./DeleteOrderModal";
+import { updateOrderStatus } from "../../api/adminApi"; // Assicurati che il percorso sia corretto
 
 export default function OrdersTable({ orders, handleDeleteOrder, handleRemoveOrderItem }) {
+  // Stati per gestire il modal di eliminazione
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [orderToDelete, setOrderToDelete] = useState(null);
 
@@ -21,10 +23,16 @@ export default function OrdersTable({ orders, handleDeleteOrder, handleRemoveOrd
     }
   };
 
-  // Se non ci sono ordini, mostra un messaggio
-  if (!Array.isArray(orders) || orders.length === 0) {
-    return <p className="text-center">Nessun ordine da visualizzare.</p>;
-  }
+  // Funzione per gestire il cambio di stato dell'ordine
+  const handleStatusChange = async (orderId, newStatus) => {
+    try {
+      await updateOrderStatus(orderId, newStatus);
+      // Qui potresti aggiungere la logica per aggiornare lo stato locale degli ordini
+      // o notificare il componente genitore del cambiamento
+    } catch (error) {
+      console.error("Errore nell'aggiornamento dello stato dell'ordine", error);
+    }
+  };
 
   // Funzione per renderizzare un singolo item dell'ordine
   const renderOrderItem = (item, orderId) => {
@@ -49,6 +57,11 @@ export default function OrdersTable({ orders, handleDeleteOrder, handleRemoveOrd
     );
   };
 
+  // Se non ci sono ordini, mostra un messaggio
+  if (!Array.isArray(orders) || orders.length === 0) {
+    return <p className="text-center">Nessun ordine da visualizzare.</p>;
+  }
+
   // Rendering principale
   return (
     <div className="container mx-auto my-14">
@@ -63,6 +76,7 @@ export default function OrdersTable({ orders, handleDeleteOrder, handleRemoveOrd
               <th className="p-4 border-b border-[#2f353c] text-left">Data</th>
               <th className="p-4 border-b border-[#2f353c] text-left">Prodotti</th>
               <th className="p-4 border-b border-[#2f353c] text-left">Totale</th>
+              <th className="p-4 border-b border-[#2f353c] text-left">Stato</th>
               <th className="p-4 border-b border-[#2f353c] text-left">Azioni</th>
             </tr>
           </thead>
@@ -77,6 +91,19 @@ export default function OrdersTable({ orders, handleDeleteOrder, handleRemoveOrd
                   {order.items.map((item) => renderOrderItem(item, order._id))}
                 </td>
                 <td className="py-2 px-4 border-b border-[#2f353c]">${order.total}</td>
+                <td className="py-2 px-4 border-b border-[#2f353c]">
+                  <select
+                    disabled
+                    value={order.status}
+                    onChange={(e) => handleStatusChange(order._id, e.target.value)}
+                    className="bg-[#0f0f0f] text-white rounded p-1"
+                  >
+                    <option value="pending">Pending</option>
+                    <option value="processing">Processing</option>
+                    <option value="completed">Completed</option>
+                    <option value="cancelled">Cancelled</option>
+                  </select>
+                </td>
                 <td className="py-2 px-4 border-b border-[#2f353c]">
                   <button
                     onClick={() => openDeleteModal(order._id)}
@@ -108,9 +135,22 @@ export default function OrdersTable({ orders, handleDeleteOrder, handleRemoveOrd
               ))}
             </div>
             <div className="mb-2"><span className="font-bold">Totale:</span> ${order.total}</div>
+            <div className="mb-2">
+              <span className="font-bold">Stato:</span>
+              <select
+                value={order.status}
+                onChange={(e) => handleStatusChange(order._id, e.target.value)}
+                className="bg-[#1f1f1f] text-white rounded p-1 ml-2"
+              >
+                <option value="pending">Pending</option>
+                <option value="processing">Processing</option>
+                <option value="completed">Completed</option>
+                <option value="cancelled">Cancelled</option>
+              </select>
+            </div>
             <div className="flex items-center justify-between mt-4">
               <button
-                onClick={() => handleDeleteOrder(order._id)}
+                onClick={() => openDeleteModal(order._id)}
                 className="text-red-500 hover:text-red-700"
               >
                 <TrashIcon className="h-5 w-5" />

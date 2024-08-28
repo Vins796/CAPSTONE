@@ -7,10 +7,32 @@ import { ChevronDown, ChevronUp, Package } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import UserRegistrationChart from "./components/UserRegistrationChart";
 import OrdersBarChart from "./components/OrdersBarChart";
+import { updateOrderStatus } from "../../../api/adminApi";
 
 // Componente per la card dell'ordine
-const OrderCard = ({ order }) => (
-  <motion.div 
+const OrderCard = ({ order, onStatusUpdate }) => {
+  // Effettuo la destrutturazione dell'oggetto order per estrarre i valori interessati
+  const [status, setStatus] = useState(order.status); // Imposto il valore iniziale allo stato iniziale dell'ordine ('pending')
+  const [isUpdating, setIsUpdating] = useState(false); // Imposto lo stato iniziale a false, verrà modificato più avanti a seconda della necessità
+
+  // Funzione per modificare lo stato dell'ordine
+  const handleStatusChange = async(e) => {
+    const newStatus = e.target.value;
+    console.log("Tentativo di aggiornamento stato", order._id, newStatus);
+    setIsUpdating(true);
+    try {
+      await updateOrderStatus(order._id, newStatus);
+      setStatus(newStatus);
+      onStatusUpdate(order._id, newStatus);
+    } catch(error) {
+      console.error("Errore nell'aggiornamento dello stato", error)
+    } finally {
+      setIsUpdating(false);
+    }
+  }
+
+  return(
+    <motion.div 
     initial={{ opacity: 0, y: 20 }}
     animate={{ opacity: 1, y: 0 }}
     exit={{ opacity: 0, y: -20 }}
@@ -43,9 +65,24 @@ const OrderCard = ({ order }) => (
         <span className="text-gray-500">Customer</span>
         <span className="text-blue-600">{order.user.name}</span>
       </div>
+
+      {/* Modifica dello stato dell'ordine */}
+      <span className="text-gray-500">Status</span>
+        <select 
+          value={status} 
+          onChange={handleStatusChange}
+          disabled={isUpdating}
+          className="bg-white text-gray-800 rounded p-1"
+        >
+          <option value="pending">Pending</option>
+          <option value="processing">Processing</option>
+          <option value="completed">Completed</option>
+          <option value="cancelled">Cancelled</option>
+        </select>
     </div>
-  </motion.div>
-);
+    </motion.div>
+  )  
+};
 
 // Componente principale Dashboard
 export default function Dashboard() {
@@ -63,6 +100,7 @@ export default function Dashboard() {
         setLoading(true);
         const ordersData = await getOrders();
         setOrders(ordersData);
+        console.log(ordersData);
       } catch (err) {
         setError("Errore nel caricamento dei dati degli ordini");
         console.error(err);
@@ -79,6 +117,13 @@ export default function Dashboard() {
 
   // Filtro per gli ordini da visualizzare
   const displayedOrders = showAllOrders ? orders : orders.slice(0, 3);
+
+  // Funzione che aggiorna lo stato dell'ordine
+  const handleOrderStatusUpdate = (orderId, newStatus) => {
+    setOrders(prevOrders => 
+      prevOrders.map(order => order._id === orderId ? { ...order, status: newStatus } : order)
+    );
+  };
 
   return (
     <div className="flex h-screen overflow-hidden bg-[#0f0f0f]">
@@ -108,7 +153,11 @@ export default function Dashboard() {
                 >
                   <AnimatePresence>
                     {displayedOrders.map(order => (
-                      <OrderCard key={order._id} order={order} />
+                      <OrderCard 
+                        key={order._id} 
+                        order={order}
+                        onStatusUpdate={handleOrderStatusUpdate} 
+                      />
                     ))}
                   </AnimatePresence>
                 </motion.div>

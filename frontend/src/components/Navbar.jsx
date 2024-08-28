@@ -7,8 +7,7 @@ import axios from "axios";
 import { useCart } from "../context/CartContext";
 import Cart from "./Cart";
 import logo from "/image.png";
-import { TbLogin } from "react-icons/tb";
-import { TbLogout } from "react-icons/tb";
+import { TbLogin, TbLogout } from "react-icons/tb";
 
 // Stili per i link della navbar
 const navLinkStyles = (isActive) =>
@@ -26,7 +25,6 @@ export default function Navbar() {
   const navigate = useNavigate();
   const { cart } = useCart();
 
-  // Effetto per sincronizzare l'utente con il backend
   useEffect(() => {
     async function sendTokenToBackend() {
       if (isAuthenticated && user) {
@@ -44,7 +42,6 @@ export default function Navbar() {
     sendTokenToBackend();
   }, [isAuthenticated, user, getIdTokenClaims]);
 
-  // Gestisce il click sul profilo/dashboard
   const handleProfileClick = () => {
     if (isAuthenticated && userInfo) {
       navigate(userInfo.role === "admin" ? "/dashboard" : `/profile/${userInfo.id}`);
@@ -53,10 +50,36 @@ export default function Navbar() {
     }
   };
 
-  // Gestisce il logout
   const handleLogout = () => {
     localStorage.removeItem("authToken");
     logout({ returnTo: window.location.origin });
+  };
+
+  // Componente AuthButton con tooltip semplice
+  const AuthButton = ({ isAuthenticated, onClick }) => {
+    return (
+      <div className="relative group hidden md:block">
+        <button 
+          onClick={onClick} 
+          className="flex items-center gap-2 text-white hover:text-[#eee] px-3 py-2 rounded-md"
+        >
+          {isAuthenticated ? (
+            <>
+              <TbLogout className="size-6"/>
+              {/* <span className="hidden md:inline text-xs">(Logout)</span> */}
+            </>
+          ) : (
+            <>
+              <TbLogin className="size-6"/>
+              {/* <span className="hidden md:inline">Login</span> */}
+            </>
+          )}
+        </button>
+        <div className="absolute bottom-6 left-full transform -translate-x-1/2 mb-2 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
+          {isAuthenticated ? "Logout" : "Login"}
+        </div>
+      </div>
+    );
   };
 
   return (
@@ -78,18 +101,16 @@ export default function Navbar() {
             <NavLink to="/" className={({ isActive }) => navLinkStyles(isActive)}>HOME</NavLink>
             <NavLink to="/products" className={({ isActive }) => navLinkStyles(isActive)}>PRODOTTI</NavLink>
             {isAuthenticated && (
-              <>
-                <NavLink 
-                  to={userInfo?.role === "admin" ? "/dashboard" : `/profile/${userInfo?.id || ''}`}
-                  className={({ isActive }) => navLinkStyles(isActive)}
-                >
-                  {userInfo?.role === "admin" ? "DASHBOARD" : "PROFILE"}
-                </NavLink>
-              </>
+              <NavLink 
+                to={userInfo?.role === "admin" ? "/dashboard" : `/profile/${userInfo?.id || ''}`}
+                className={({ isActive }) => navLinkStyles(isActive)}
+              >
+                {userInfo?.role === "admin" ? "DASHBOARD" : "PROFILE"}
+              </NavLink>
             )}
           </div>
 
-          {/* Cart and Menu Buttons */}
+          {/* Cart and Auth Buttons */}
           <div className="flex items-center gap-2">
             {/* Cart Icon */}
             <button onClick={() => setIsCartOpen(!isCartOpen)} className="relative">
@@ -100,16 +121,12 @@ export default function Navbar() {
                 </span>
               )}
             </button>
-            {isAuthenticated ? (
-              <button onClick={handleLogout} className="md:block text-white hover:text-[#eee] px-3 py-2 rounded-md w-full text-left hidden">
-              <TbLogout className="size-6"/>
-            </button>
-            ) : (
-              <button onClick={handleProfileClick} className="md:block text-white hover:text-[#eee] px-3 py-2 rounded-md w-full text-left hidden">
-                  <TbLogin className="size-6"/>
-              </button>
-            )}
             
+            {/* Auth Button */}
+            <AuthButton 
+              isAuthenticated={isAuthenticated} 
+              onClick={isAuthenticated ? handleLogout : handleProfileClick} 
+            />
             
             {/* Mobile Menu Button */}
             <button

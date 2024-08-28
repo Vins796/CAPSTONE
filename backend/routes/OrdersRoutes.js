@@ -92,13 +92,46 @@ router.post('/', authMiddleware, async (req, res) => {
     }
 });
 
-// PUT /orders/:id: Aggiorna lo stato di un ordine (solo per admin)
-router.put('/:id', authMiddleware, isAdmin, async (req, res) => {
+// // PUT /orders/:id: Aggiorna lo stato di un ordine (solo per admin)
+// router.put('/:id', authMiddleware, isAdmin, async (req, res) => {
+//     try {
+//         const updatedOrder = await Order.findByIdAndUpdate(req.params.id, req.body, { new: true });
+//         if (!updatedOrder) {
+//             return res.status(404).json({ message: "Ordine non trovato" });
+//         }
+//         res.json(updatedOrder);
+//     } catch(err) {
+//         res.status(400).json({ message: err.message });
+//     }
+// });
+
+// PUT /orders/:id/status: Aggiorna lo stato di un ordine (solo per admin)
+router.put('/:id/status', authMiddleware, isAdmin, async (req, res) => {
+    console.log("ricevuta richiesta di aggiornamento stato dell'ordine", req.params.id);
+    console.log("headers della richiesta", req.headers);
+    console.log("corpo della richiesta", req.body);
+    console.log("Tipo di req.body:", typeof req.body);
+
+    const { status } = req.body;
+    const orderId = req.params.id;
+
+    console.log("Status errato", status);
+
+    if(!status) {
+        return res.status(400).json({ message: "Stato dell'ordine non specificato" })
+    }
+
     try {
-        const updatedOrder = await Order.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        const updatedOrder = await Order.findByIdAndUpdate(
+            orderId,
+            { status: status },
+            { new: true }
+        );
+
         if (!updatedOrder) {
             return res.status(404).json({ message: "Ordine non trovato" });
         }
+        console.log("Ordine aggiornato:", updatedOrder);
         res.json(updatedOrder);
     } catch(err) {
         res.status(400).json({ message: err.message });

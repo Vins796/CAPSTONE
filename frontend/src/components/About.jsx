@@ -35,8 +35,8 @@ export default function About() {
                 <div key={item.year} className={`flex flex-col md:flex-row items-center mb-8 ${index % 2 !== 0 ? 'md:flex-row-reverse' : ''}`}>
                   <div className="flex-1 w-full md:w-1/2 mb-4 md:mb-0">
                     <div className="bg-[#0f0f0f] p-8 lg:p-12 rounded-lg shadow-xl">
-                      <h2 className='font-bold font-poppins text-xl md:text-2xl text-transparent bg-clip-text bg-gradient-to-r from-amber-800 via-amber-700 to-yellow-100'>{item.title}</h2>
-                      <p className='text-white font-poppins font-light text-sm md:text-base'>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquam cumque iusto earum hic ad magnam a quae soluta aspernatur quia?</p>
+                      <h2 className='font-bold font-poppins text-xl text-center mb-3 md:text-2xl text-transparent bg-clip-text bg-gradient-to-r from-amber-800 via-amber-700 to-yellow-100'>{item.title}</h2>
+                      <p className='text-white font-poppins font-light text-center text-md md:text-base'>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquam cumque iusto earum hic ad magnam a quae soluta aspernatur quia?</p>
                     </div>
                   </div>
                   <div className="flex flex-col items-center mx-4">

@@ -29,7 +29,7 @@ export default function Hero() {
         transition={{ delay: 0.2, duration: 0.6 }}
       >
         <motion.p 
-          className="text[#eee] md:text-3xl w-full md-w-full mx-auto mb-4 font-sans text-lg"
+          className="text[#eee] md:text-3xl w-full md-w-full mx-auto mb-4 font-sans text-lg hidden md:block"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6, duration: 0.6 }}
@@ -37,7 +37,7 @@ export default function Hero() {
           LA TRADIZIONE DEL NOSTRO TERRITORIO
         </motion.p>
         <motion.h1 
-          className='text-transparent bg-clip-text bg-gradient-to-r from-slate-300 via-gray-300 to-gray-400 text-5xl font-poppins font-bold mb-4'
+          className='text-transparent bg-clip-text bg-gradient-to-r from-slate-400 via-gray-300 to-gray-400 text-3xl md:text-5xl font-poppins font-bold mb-4'
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4, duration: 0.6 }}
@@ -45,7 +45,7 @@ export default function Hero() {
           L'AUTENTICO FORNO DI QUARTIERE!
         </motion.h1>
         <motion.p 
-          className="text[#eee] text-md md:text-2xl w-full max-w-[450px] mx-auto font-sans text-xl"
+          className="text[#eee] text-md md:text-2xl w-full max-w-[450px] mx-auto font-sans text-xl hidden md:block"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6, duration: 0.6 }}
@@ -53,19 +53,19 @@ export default function Hero() {
           DAL 1993
         </motion.p>
         <motion.div 
-          className="flex gap-5 justify-center items-center mt-8"
+          className="flex gap-5 justify-center items-center md:mt-6"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.8, duration: 0.6 }}
         >
-          <Link to='/products'><button className="bg-[#eee] h-10 px-3 font-poppins text-black hover:shadow-lg">PRODOTTI</button></Link>
+          <Link to='/products'><button className="bg-[#dadada] drop-shadow-lg h-10 px-3 font-poppins text-black hover:shadow-lg">PRODOTTI</button></Link>
           <ScrollLink 
             to="about-section" 
             smooth={true} 
             duration={500} 
             offset={-72}
           >
-            <button className="bg-[#0f0f0f] h-10 px-3 text-white font-poppins hover:shadow-lg">ABOUT</button>
+            <button className="bg-[#0f0f0f] drop-shadow-lg h-10 px-3 text-[#dadada] font-poppins hover:shadow-lg">ABOUT</button>
           </ScrollLink>
         </motion.div>
       </motion.section>

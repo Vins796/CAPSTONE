@@ -69,13 +69,13 @@ export default function Products() {
       </video>
       <div className="absolute inset-0 bg-black opacity-50"></div>
         <motion.section
-          className="pt-[80px] md:pt-0 absolute bottom-7 inset-x-0 md:bottom-auto md:top-1/2 md:-translate-y-1/2"
+          className="absolute bottom-7 inset-x-0 md:bottom-auto md:top-1/2 md:-translate-y-1/2"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2, duration: 0.6 }}
         >
           <motion.h1 
-            className='text-transparent bg-clip-text bg-gradient-to-r from-slate-300 via-gray-300 to-gray-400 text-5xl font-poppins font-bold mb-4 mx-auto text-center'
+            className='text-transparent bg-clip-text bg-gradient-to-r from-slate-300 via-gray-300 to-gray-400 text-3xl md:text-5xl font-poppins font-bold mb-3 mx-auto text-center'
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4, duration: 0.6 }}
@@ -83,7 +83,7 @@ export default function Products() {
             I NOSTRI PRODOTTI
           </motion.h1>
           <motion.p 
-            className="bg-clip-text uppercase text-md md:text-2xl w-[350px] md:w-[450px] mx-auto text-center font-poppins bg-gradient-to-r from-slate-300 via-gray-300 to-gray-400"
+            className="bg-clip-text uppercase text-lg md:text-2xl w-[350px] md:w-[450px] mx-auto text-center font-poppins bg-gradient-to-r from-slate-300 via-gray-300 to-gray-400"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6, duration: 0.6 }}

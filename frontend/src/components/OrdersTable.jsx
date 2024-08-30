@@ -1,14 +1,18 @@
 import { useState } from "react";
-import { TrashIcon } from "@heroicons/react/24/outline";
+import { TrashIcon, EyeIcon, ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/24/outline";
 import DeleteModal from "./DeleteOrderModal";
-import { updateOrderStatus } from "../../api/adminApi"; // Assicurati che il percorso sia corretto
+import { updateOrderStatus } from "../../api/adminApi";
+import toast from 'react-hot-toast';
 
 export default function OrdersTable({ orders, handleDeleteOrder, handleRemoveOrderItem }) {
-  // Stati per gestire il modal di eliminazione
+  // Stati per gestire i modali e l'espansione degli ordini
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [orderToDelete, setOrderToDelete] = useState(null);
+  const [isRemoveItemModalOpen, setIsRemoveItemModalOpen] = useState(false);
+  const [itemToRemove, setItemToRemove] = useState(null);
+  const [expandedOrder, setExpandedOrder] = useState(null);
 
-  // Funzione per aprire il modal di conferma eliminazione
+  // Funzione per aprire il modal di conferma eliminazione ordine
   const openDeleteModal = (orderId) => {
     setOrderToDelete(orderId);
     setIsDeleteModalOpen(true);
@@ -20,6 +24,27 @@ export default function OrdersTable({ orders, handleDeleteOrder, handleRemoveOrd
       handleDeleteOrder(orderToDelete);
       setIsDeleteModalOpen(false);
       setOrderToDelete(null);
+      toast.success('Ordine eliminato con successo', {
+        position: 'bottom-center',
+      });
+    }
+  };
+
+  // Funzione per aprire il modal di conferma rimozione articolo
+  const openRemoveItemModal = (orderId, itemId) => {
+    setItemToRemove({ orderId, itemId });
+    setIsRemoveItemModalOpen(true);
+  };
+
+  // Funzione per confermare la rimozione dell'articolo
+  const confirmRemoveItem = () => {
+    if (itemToRemove) {
+      handleRemoveOrderItem(itemToRemove.orderId, itemToRemove.itemId);
+      setIsRemoveItemModalOpen(false);
+      setItemToRemove(null);
+      toast.success('Articolo rimosso dall\'ordine', {
+        position: 'bottom-center',
+      });
     }
   };
 
@@ -27,31 +52,37 @@ export default function OrdersTable({ orders, handleDeleteOrder, handleRemoveOrd
   const handleStatusChange = async (orderId, newStatus) => {
     try {
       await updateOrderStatus(orderId, newStatus);
-      // Qui potresti aggiungere la logica per aggiornare lo stato locale degli ordini
-      // o notificare il componente genitore del cambiamento
+      toast.success(`Stato dell'ordine aggiornato a ${newStatus}`, {
+        position: 'bottom-center',
+      });
     } catch (error) {
       console.error("Errore nell'aggiornamento dello stato dell'ordine", error);
+      toast.error('Errore nell\'aggiornamento dello stato dell\'ordine', {
+        position: 'bottom-center',
+      });
     }
   };
 
   // Funzione per renderizzare un singolo item dell'ordine
-  const renderOrderItem = (item, orderId) => {
+  const renderOrderItem = (item, orderId, isOnlyItem) => {
     const itemId = item.id || item._id || item.product;
     if (!itemId) {
       console.error("Item senza ID trovato:", item);
       return null;
     }
     return (
-      <div key={`${orderId}-${itemId}`}>
-        <span>{item.productName || "Nome non disponibile"}</span>
+      <div key={`${orderId}-${itemId}`} className="flex justify-between items-center py-2 border-b border-gray-700">
+        <span className="text-gray-300">{item.productName || "Nome non disponibile"}</span>
         <div className="flex items-center">
-          <span className="mr-2">x {item.quantity}</span>
-          <button
-            onClick={() => handleRemoveOrderItem(orderId, itemId)}
-            className="ml-2 text-red-500"
-          >
-            <TrashIcon className="h-4 w-4" />
-          </button>
+          <span className="mr-4 text-gray-400">x {item.quantity}</span>
+          {!isOnlyItem && (
+            <button
+              onClick={() => openRemoveItemModal(orderId, itemId)}
+              className="text-red-500 hover:text-red-700"
+            >
+              <TrashIcon className="h-4 w-4" />
+            </button>
+          )}
         </div>
       </div>
     );
@@ -59,112 +90,76 @@ export default function OrdersTable({ orders, handleDeleteOrder, handleRemoveOrd
 
   // Se non ci sono ordini, mostra un messaggio
   if (!Array.isArray(orders) || orders.length === 0) {
-    return <p className="text-center">Nessun ordine da visualizzare.</p>;
+    return <p className="text-center text-gray-400 py-8">Nessun ordine da visualizzare.</p>;
   }
 
-  // Rendering principale
   return (
-    <div className="container mx-auto my-14">
-      <h2 className="text-center text-2xl mb-5">I tuoi Ordini</h2>
+    <div className="bg-[#141414] rounded-lg shadow-lg overflow-hidden">
+      <div className="px-4 py-3 border-b border-gray-700">
+        <h2 className="text-lg font-semibold text-white">I tuoi Ordini</h2>
+      </div>
 
-      {/* Tabella per schermi più grandi */}
-      <div className="hidden md:block overflow-x-auto rounded-lg">
-        <table className="min-w-full bg-[#0f0f0f]">
-          <thead>
-            <tr>
-              <th className="p-4 border-b border-[#2f353c] text-left">ID Ordine</th>
-              <th className="p-4 border-b border-[#2f353c] text-left">Data</th>
-              <th className="p-4 border-b border-[#2f353c] text-left">Prodotti</th>
-              <th className="p-4 border-b border-[#2f353c] text-left">Totale</th>
-              <th className="p-4 border-b border-[#2f353c] text-left">Stato</th>
-              <th className="p-4 border-b border-[#2f353c] text-left">Azioni</th>
-            </tr>
-          </thead>
-          <tbody>
-            {orders.map((order) => (
-              <tr key={order._id}>
-                <td className="py-2 px-4 border-b border-[#2f353c]">{order._id}</td>
-                <td className="py-2 px-4 border-b border-[#2f353c]">
-                  {new Date(order.createdAt).toLocaleDateString()}
-                </td>
-                <td className="py-2 px-4 border-b border-[#2f353c]">
-                  {order.items.map((item) => renderOrderItem(item, order._id))}
-                </td>
-                <td className="py-2 px-4 border-b border-[#2f353c]">${order.total}</td>
-                <td className="py-2 px-4 border-b border-[#2f353c]">
+      <div className="divide-y divide-gray-700">
+        {orders.map((order) => (
+          <div key={order._id} className="p-4">
+            <div className="flex justify-between items-center">
+              <div>
+                <p className="text-sm text-gray-400">Ordine #{order._id.slice(-6)}</p>
+                <p className="text-lg font-medium text-white">${order.total}</p>
+                <p className="text-xs text-gray-400">{new Date(order.createdAt).toLocaleDateString()}</p>
+              </div>
+              <button
+                onClick={() => setExpandedOrder(expandedOrder === order._id ? null : order._id)}
+                className="text-blue-500 hover:text-blue-400"
+              >
+                {expandedOrder === order._id ? (
+                  <ChevronUpIcon className="h-6 w-6" />
+                ) : (
+                  <ChevronDownIcon className="h-6 w-6" />
+                )}
+              </button>
+            </div>
+            {expandedOrder === order._id && (
+              <div className="mt-4 bg-[#1b1b1b] p-4 rounded-lg">
+                <h4 className="text-md font-medium text-white mb-2">Dettagli dell'ordine</h4>
+                {order.items.map((item) => renderOrderItem(item, order._id, order.items.length === 1))}
+                <div className="mt-4 flex justify-between items-center">
                   <select
                     disabled
                     value={order.status}
                     onChange={(e) => handleStatusChange(order._id, e.target.value)}
-                    className="bg-[#0f0f0f] text-white rounded p-1"
+                    className="bg-[#1b1b1b] text-white rounded p-2 text-sm"
                   >
                     <option value="pending">Pending</option>
                     <option value="processing">Processing</option>
                     <option value="completed">Completed</option>
                     <option value="cancelled">Cancelled</option>
                   </select>
-                </td>
-                <td className="py-2 px-4 border-b border-[#2f353c]">
                   <button
                     onClick={() => openDeleteModal(order._id)}
-                    className="text-red-500 hover:text-red-700 mr-2"
+                    className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded text-sm"
                   >
-                    <TrashIcon className="h-5 w-5" />
+                    Elimina ordine
                   </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      {/* Lista per schermi più piccoli */}
-      <div className="md:hidden px-5">
-        {orders.map((order) => (
-          <div key={order._id} className="bg-[#0f0f0f] shadow rounded-lg mb-4 p-4">
-            <div className="mb-2"><span className="font-bold">ID Ordine:</span> {order._id}</div>
-            <div className="mb-2">
-              <span className="font-bold">Data:</span> {new Date(order.createdAt).toLocaleDateString()}
-            </div>
-            <div className="mb-2">
-              <span className="font-bold">Prodotti:</span>
-              {order.items.map((item) => (
-                <div key={`mobile-${order._id}-${item._id || item.id || item.product}`}>
-                  {item.productName || "Nome non disponibile"} x {item.quantity}
                 </div>
-              ))}
-            </div>
-            <div className="mb-2"><span className="font-bold">Totale:</span> ${order.total}</div>
-            <div className="mb-2">
-              <span className="font-bold">Stato:</span>
-              <select
-                value={order.status}
-                onChange={(e) => handleStatusChange(order._id, e.target.value)}
-                className="bg-[#1f1f1f] text-white rounded p-1 ml-2"
-              >
-                <option value="pending">Pending</option>
-                <option value="processing">Processing</option>
-                <option value="completed">Completed</option>
-                <option value="cancelled">Cancelled</option>
-              </select>
-            </div>
-            <div className="flex items-center justify-between mt-4">
-              <button
-                onClick={() => openDeleteModal(order._id)}
-                className="text-red-500 hover:text-red-700"
-              >
-                <TrashIcon className="h-5 w-5" />
-              </button>
-            </div>
+              </div>
+            )}
           </div>
         ))}
       </div>
 
-      {/* Modal di conferma eliminazione */}
+      {/* Modali di conferma */}
       {isDeleteModalOpen && (
         <DeleteModal
           handleDeleteOrder={confirmDelete}
           onClose={() => setIsDeleteModalOpen(false)}
+        />
+      )}
+      {isRemoveItemModalOpen && (
+        <DeleteModal
+          handleDeleteOrder={confirmRemoveItem}
+          onClose={() => setIsRemoveItemModalOpen(false)}
+          message="Sei sicuro di voler rimuovere questo articolo dall'ordine?"
         />
       )}
     </div>

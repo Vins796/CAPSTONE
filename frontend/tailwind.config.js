@@ -12,6 +12,7 @@ export default {
     fontFamily: {
       'sans': ['Inter', 'ui-sans-serif', 'system-ui'],
       'poppins': ['Poppins', 'sans-serif'],
+      'inter': ['Inter Tight', 'sans-serif'],
       'serif': ['ui-serif', 'Georgia'],
       'mono': ['ui-monospace', 'SFMono-Regular'],
       'display': ['Oswald'],

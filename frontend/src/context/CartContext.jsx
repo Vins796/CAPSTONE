@@ -40,7 +40,7 @@ export const CartProvider = ({ children }) => {
       }));
       const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
       
-      console.log("Invio l'ordine", { items: orderItems, total });
+      // console.log("Invio l'ordine", { items: orderItems, total });
       const response = await checkout({ items: orderItems, total });
       setCart([]);
       return response;

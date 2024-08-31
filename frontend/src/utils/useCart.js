@@ -30,7 +30,7 @@ export const useCart = () => {
             updateCart(newCart);
         } else {
             // Se il prodotto non esiste lo aggiungo al carrello
-            updateCart([...cart, { product: product._id, quantity: 1 }]);
+            updateCart([...cart, { product: product._id, quantity: 1, name: product.name }]);
         }
     };
 

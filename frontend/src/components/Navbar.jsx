@@ -84,7 +84,7 @@ export default function Navbar() {
 
   return (
     <motion.nav
-      className="bg-[#0f0f0f] fixed w-full py-3 z-50"
+      className="bg-[#0f0f0f]/85 fixed w-full py-3 z-50"
       initial={{ opacity: 1, y: -50 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}

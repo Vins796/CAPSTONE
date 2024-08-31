@@ -105,7 +105,7 @@ export default function OrdersTable({ orders, handleDeleteOrder, handleRemoveOrd
             <div className="flex justify-between items-center">
               <div>
                 <p className="text-sm text-gray-400">Ordine #{order._id.slice(-6)}</p>
-                <p className="text-lg font-medium text-white">${order.total}</p>
+                <p className="text-lg font-medium text-white">€{order.total}</p>
                 <p className="text-xs text-gray-400">{new Date(order.createdAt).toLocaleDateString()}</p>
               </div>
               <button
@@ -130,10 +130,9 @@ export default function OrdersTable({ orders, handleDeleteOrder, handleRemoveOrd
                     onChange={(e) => handleStatusChange(order._id, e.target.value)}
                     className="bg-[#1b1b1b] text-white rounded p-2 text-sm"
                   >
-                    <option value="pending">Pending</option>
-                    <option value="processing">Processing</option>
-                    <option value="completed">Completed</option>
-                    <option value="cancelled">Cancelled</option>
+                    <option value="pending">Inviato</option>
+                    <option value="processing">In lavorazione</option>
+                    <option value="completed">Completato</option>
                   </select>
                   <button
                     onClick={() => openDeleteModal(order._id)}

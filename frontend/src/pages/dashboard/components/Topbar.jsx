@@ -1,10 +1,10 @@
-import { MoonIcon, UserIcon, MagnifyingGlassIcon, Bars2Icon, PlusIcon } from "@heroicons/react/24/outline"
+import { Bars2Icon, PlusIcon } from "@heroicons/react/24/outline"
 import { useState } from "react";
 import CreateProduct from "./CreateProduct";
 import { productApi } from "../../../../api/productApi";
 import ConfirmAlert from "./ConfirmAlert";
 
-export default function Topbar({ onMenuButtonClick }) {
+export default function Topbar({ onMenuButtonClick, search, handleSearch }) {
 
   const [isCreateProductOpen, setIsCreateProductOpen] = useState(false); // Stato per gestire l'apertura della modale
   const [showAlert, setShowAlert] = useState(false); // Stato per mostrare l'alert di avvenuta creazione del prodotto
@@ -20,7 +20,7 @@ export default function Topbar({ onMenuButtonClick }) {
   const handleCreateProduct = async() => {
     try {
       const newProduct = await productApi.createProduct(productData);
-      console.log('New product created:', newProduct);
+      // console.log('New product created:', newProduct);
       setIsCreateProductOpen(false);
       setShowAlert(true);
       // Nascondo l'alert dopo alcuni secondi
@@ -47,12 +47,11 @@ export default function Topbar({ onMenuButtonClick }) {
         <div className="flex items-center flex-1 ml-4 md:ml-0">
           <input 
             type="text" 
+            value={search}
+            onChange={handleSearch}
             placeholder="Search" 
-            className="w-full max-w-xs p-2 bg-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full max-w-xs text-[#0f0f0f] p-2 bg-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
-          <button type="button" className="ml-2">
-            <MagnifyingGlassIcon className="text-gray-500 h-5 w-5 hidden md:block"/>
-          </button>
         </div>
         <div className="flex items-center cursor-pointer text-gray-500" onClick={() => setIsCreateProductOpen(true)}>
           {/* <button><MoonIcon className="text-gray-500 h-5 w-5"/></button> */}

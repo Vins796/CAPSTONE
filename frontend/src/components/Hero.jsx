@@ -45,7 +45,7 @@ export default function Hero() {
           L'AUTENTICO FORNO DI QUARTIERE!
         </motion.h1>
         <motion.p 
-          className="text[#eee] text-md md:text-2xl w-full max-w-[450px] mx-auto font-sans text-xl hidden md:block"
+          className="text[#eee] text-md md:text-2xl w-full max-w-[450px] mx-auto font-sans mb-4 hidden md:block"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6, duration: 0.6 }}

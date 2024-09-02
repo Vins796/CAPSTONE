@@ -36,6 +36,14 @@ export default function Cart({ isCartOpen, closeCart }) {
     closeCart();
   };
 
+  const handleQuantityChange = (itemId, newQuantity) => {
+    if (newQuantity <= 0) {
+      removeFromCart(itemId);
+    } else {
+      updateQuantity(itemId, newQuantity);
+    }
+  };
+
   return (
     <>
       <div className="p-4 font-poppins text-[#dadada]">
@@ -50,9 +58,9 @@ export default function Cart({ isCartOpen, closeCart }) {
               <p>€ {item.price} x {item.quantity}</p>
             </div>
             <div className="flex items-center gap-2">
-              <button onClick={() => updateQuantity(item._id, item.quantity - 1)} className="border border-black rounded-full size-8 hover:bg-gray-300 hover:text-[#0f0f0f]">-</button>
+              <button onClick={() => handleQuantityChange(item._id, item.quantity - 1)} className="border border-black rounded-full size-8 hover:bg-gray-300 hover:text-[#0f0f0f]">-</button>
               <span className="mx-2">{item.quantity}</span>
-              <button onClick={() => updateQuantity(item._id, item.quantity + 1)} className="border border-black rounded-full size-8 hover:bg-gray-300 hover:text-[#0f0f0f]">+</button>
+              <button onClick={() => handleQuantityChange(item._id, item.quantity + 1)} className="border border-black rounded-full size-8 hover:bg-gray-300 hover:text-[#0f0f0f]">+</button>
               <button onClick={() => removeFromCart(item._id)} className="ml-2"><TrashIcon className="size-6 hover:text-red-600"/></button>
             </div>
           </div>

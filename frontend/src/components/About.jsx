@@ -4,10 +4,27 @@ import { CalendarIcon } from '@heroicons/react/24/outline'
 
 export default function About() {
     const timelineItems = [
-        { year: '1930', title: "L'INIZIO" },
-        { year: '1990', title: "ESPANSIONE" },
-        { year: '2020', title: "INNOVAZIONE" },
-        { year: '2024', title: "INNOVAZIONE" },
+        { 
+          year: '1970', 
+          title: "NASCITA",
+          description: 'La bottega viene rilevata dalla famiglia Cirio che fa conoscere in tutto il chierese e dintorni gli ottimi grissini Rubatà di Poirino'
+        },
+        { 
+          year: '1980', 
+          title: "EVOLUZIONE",
+          description: 'Con la famiglia Menzio la bottega si evolve diventando panificio e pasticceria artigianale in seguito ad un ampia ristrutturazione'
+        },
+        { 
+          year: '1993', 
+          title: "ESPANSIONE",
+          description: 'Il panificio viene acquisito dalla Famiglia Rubinetto che per quasi un trentennio gestisce con ottimi risultati il Forno'
+        },
+        { 
+          year: '2022', 
+          title: "INNOVAZIONE",
+          description: 'Con la nuova gestione della famiglia Agostini l attività de Il Forno prosegue, cercando sempre di innovarsi pur rimanendo sempre legata alle tradizioni e ai suoi prodotti'
+        }
+        
     ];
 
     return (
@@ -36,7 +53,7 @@ export default function About() {
                   <div className="flex-1 w-full md:w-1/2 mb-4 md:mb-0">
                     <div className="bg-[#0f0f0f] p-8 lg:p-12 rounded-lg shadow-xl">
                       <h2 className='font-bold font-poppins text-xl text-center mb-3 md:text-2xl text-transparent bg-clip-text bg-gradient-to-r from-amber-800 via-amber-700 to-yellow-100'>{item.title}</h2>
-                      <p className='text-white font-poppins font-light text-center text-md md:text-base'>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquam cumque iusto earum hic ad magnam a quae soluta aspernatur quia?</p>
+                      <p className='text-white font-poppins font-light text-center text-md md:text-base'>{item.description}</p>
                     </div>
                   </div>
                   <div className="flex flex-col items-center mx-4">

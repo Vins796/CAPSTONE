@@ -24,9 +24,7 @@ export const CartProvider = ({ children }) => {
 
   const updateQuantity = (productId, quantity) => {
     setCart(prevCart => 
-      prevCart.map(item => 
-        item._id === productId ? { ...item, quantity } : item
-      )
+      prevCart.map(item => item._id === productId ? { ...item, quantity } : item )
     );
   };
 

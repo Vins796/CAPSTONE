@@ -150,114 +150,116 @@ export default function UserProfile() {
   if (!profile) return <div className="text-center py-10">Nessun profilo trovato</div>;
 
   return (
-    <div className="bg-[#0f0f0f] min-h-screen text-white">
-      <Navbar />
-      <Toaster
-        toastOptions={{
-          success: {
-            duration: 3000,
-          },
-          error: {
-            duration: 3000,
-          },
-        }}
-      />
-      <div className="container mx-auto px-4 py-20 md:py-36">
-        <div className="bg-[#141414] shadow-xl rounded-lg overflow-hidden">
-          <div className="md:flex flex-col md:flex-row">
-            {/* Sezione immagine profilo */}
-            <div className="md:w-full p-6 md:p-8 bg-[#1b1b1b]">
-              <div className="relative">
-                <div className="w-32 h-32 md:w-48 md:h-48 mx-auto rounded-full overflow-hidden bg-gray-600 flex items-center justify-center">
-                  {isImageLoading ? (
-                    <div className="text-white">Caricamento...</div>
-                  ) : profile.image ? (
-                    <img
-                      src={`http://localhost:5001${profile.image}`}
-                      alt="Profile"
-                      className="w-full h-full object-cover"
-                      onError={(e) => { e.target.src = "/path/to/fallback/image.jpg"; }}
-                    />
+    <>
+      <div className="bg-[#0f0f0f] min-h-screen text-white">
+        <Navbar />
+        <Toaster
+          toastOptions={{
+            success: {
+              duration: 3000,
+            },
+            error: {
+              duration: 3000,
+            },
+          }}
+        />
+        <div className="container mx-auto px-4 py-20 md:py-36">
+          <div className="bg-[#141414] shadow-xl rounded-lg overflow-hidden">
+            <div className="md:flex flex-col md:flex-row">
+              {/* Sezione immagine profilo */}
+              <div className="md:w-full p-6 md:p-8 bg-[#1b1b1b]">
+                <div className="relative">
+                  <div className="w-32 h-32 md:w-48 md:h-48 mx-auto rounded-full overflow-hidden bg-gray-600 flex items-center justify-center">
+                    {isImageLoading ? (
+                      <div className="text-white">Caricamento...</div>
+                    ) : profile.image ? (
+                      <img
+                        src={`http://localhost:5001${profile.image}`}
+                        alt="Profile"
+                        className="w-full h-full object-cover"
+                        onError={(e) => { e.target.src = "/path/to/fallback/image.jpg"; }}
+                      />
+                    ) : (
+                      <UserCircleIcon className="w-24 h-24 md:w-32 md:h-32 text-gray-400" />
+                    )}
+                  </div>
+                  <label className="absolute bottom-0 right-1/2 md:right-0 transform translate-x-1/2 md:translate-x-0 bg-blue-500 rounded-full p-2 cursor-pointer">
+                    <CameraIcon className="w-5 h-5 md:w-6 md:h-6 text-white" />
+                    <input type="file" className="hidden" onChange={handleImageChange} accept="image/*" />
+                  </label>
+                </div>
+                <h2 className="text-xl md:text-2xl font-bold text-center mt-4">{profile.name || profile.email}</h2>
+                <p className="text-gray-400 text-center text-sm md:text-base">{profile.email}</p>
+              </div>
+
+              {/* Sezione campi profilo */}
+              <div className="md:w-full p-6 md:p-8">
+                <div className="flex flex-col md:flex-row justify-between items-center mb-6">
+                  <h3 className="text-lg md:text-xl font-semibold mb-4 md:mb-0">Informazioni Profilo</h3>
+                  {!isEditing ? (
+                    <button onClick={() => setIsEditing(true)} className="w-full md:w-auto bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded">
+                      <PencilIcon className="h-5 w-5 inline mr-2" /> Modifica
+                    </button>
                   ) : (
-                    <UserCircleIcon className="w-24 h-24 md:w-32 md:h-32 text-gray-400" />
+                    <div className="flex flex-col md:flex-row w-full md:w-auto space-y-2 md:space-y-0 md:space-x-2">
+                      <button onClick={handleSave} className="w-full md:w-auto bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded">
+                        <CheckIcon className="h-5 w-5 inline mr-2" /> Salva
+                      </button>
+                      <button onClick={() => setIsEditing(false)} className="w-full md:w-auto bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded">
+                        <XMarkIcon className="h-5 w-5 inline mr-2" /> Annulla
+                      </button>
+                    </div>
                   )}
                 </div>
-                <label className="absolute bottom-0 right-1/2 md:right-0 transform translate-x-1/2 md:translate-x-0 bg-blue-500 rounded-full p-2 cursor-pointer">
-                  <CameraIcon className="w-5 h-5 md:w-6 md:h-6 text-white" />
-                  <input type="file" className="hidden" onChange={handleImageChange} accept="image/*" />
-                </label>
-              </div>
-              <h2 className="text-xl md:text-2xl font-bold text-center mt-4">{profile.name || profile.email}</h2>
-              <p className="text-gray-400 text-center text-sm md:text-base">{profile.email}</p>
-            </div>
 
-            {/* Sezione campi profilo */}
-            <div className="md:w-full p-6 md:p-8">
-              <div className="flex flex-col md:flex-row justify-between items-center mb-6">
-                <h3 className="text-lg md:text-xl font-semibold mb-4 md:mb-0">Informazioni Profilo</h3>
-                {!isEditing ? (
-                  <button onClick={() => setIsEditing(true)} className="w-full md:w-auto bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded">
-                    <PencilIcon className="h-5 w-5 inline mr-2" /> Modifica
-                  </button>
-                ) : (
-                  <div className="flex flex-col md:flex-row w-full md:w-auto space-y-2 md:space-y-0 md:space-x-2">
-                    <button onClick={handleSave} className="w-full md:w-auto bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded">
-                      <CheckIcon className="h-5 w-5 inline mr-2" /> Salva
-                    </button>
-                    <button onClick={() => setIsEditing(false)} className="w-full md:w-auto bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded">
-                      <XMarkIcon className="h-5 w-5 inline mr-2" /> Annulla
-                    </button>
-                  </div>
-                )}
+                <ProfileField 
+                  label="Nome"
+                  value={isEditing ? editedProfile.name : profile.name}
+                  isEditing={isEditing}
+                  onChange={(value) => setEditedProfile(prev => ({ ...prev, name: value }))}
+                  placeholder="Inserisci il tuo nome"
+                />
+                <ProfileField 
+                  label="Indirizzo"
+                  value={isEditing ? editedProfile.address : profile.address}
+                  isEditing={isEditing}
+                  onChange={(value) => setEditedProfile(prev => ({ ...prev, address: value }))}
+                  placeholder="Inserisci il tuo indirizzo"
+                />
+                <ProfileField 
+                  label="Numero di telefono"
+                  value={isEditing ? editedProfile.phone : profile.phone}
+                  isEditing={isEditing}
+                  onChange={(value) => setEditedProfile(prev => ({ ...prev, phone: value }))}
+                  placeholder="Inserisci il tuo numero di telefono"
+                />
               </div>
-
-              <ProfileField 
-                label="Nome"
-                value={isEditing ? editedProfile.name : profile.name}
-                isEditing={isEditing}
-                onChange={(value) => setEditedProfile(prev => ({ ...prev, name: value }))}
-                placeholder="Inserisci il tuo nome"
-              />
-              <ProfileField 
-                label="Indirizzo"
-                value={isEditing ? editedProfile.address : profile.address}
-                isEditing={isEditing}
-                onChange={(value) => setEditedProfile(prev => ({ ...prev, address: value }))}
-                placeholder="Inserisci il tuo indirizzo"
-              />
-              <ProfileField 
-                label="Numero di telefono"
-                value={isEditing ? editedProfile.phone : profile.phone}
-                isEditing={isEditing}
-                onChange={(value) => setEditedProfile(prev => ({ ...prev, phone: value }))}
-                placeholder="Inserisci il tuo numero di telefono"
-              />
             </div>
           </div>
-        </div>
 
-        {/* Sezione Ordini */}
-        <div className="mt-8 md:mt-12">
-          <h3 className="text-xl md:text-2xl font-semibold mb-4 md:mb-6">I tuoi Ordini</h3>
-          {orders.length > 0 ? (
-            <OrdersTable
-              orders={orders}
-              handleDeleteOrder={handleDeleteOrder}
-              handleRemoveOrderItem={handleRemoveOrderItem}
-            />
-          ) : (
-            <div className="text-center py-8 md:py-10 bg-[#141414] rounded-lg">
-              <p className="text-lg md:text-xl">Nessun ordine trovato.</p>
-            </div>
-          )}
-        </div>
-        <div className="text-center mt-8 flex justify-center p-1">          
-          <Link to='/products' className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded flex items-center">
-            <PlusIcon className="size-5 mr-1"/> Effettua un ordine
-          </Link>
+          {/* Sezione Ordini */}
+          <div className="mt-8 md:mt-12">
+            <h3 className="text-xl md:text-2xl font-semibold mb-4 md:mb-6">I tuoi Ordini</h3>
+            {orders.length > 0 ? (
+              <OrdersTable
+                orders={orders}
+                handleDeleteOrder={handleDeleteOrder}
+                handleRemoveOrderItem={handleRemoveOrderItem}
+              />
+            ) : (
+              <div className="text-center py-8 md:py-10 bg-[#141414] rounded-lg">
+                <p className="text-lg md:text-xl">Nessun ordine trovato.</p>
+              </div>
+            )}
+          </div>
+          <div className="text-center mt-8 flex justify-center p-1">          
+            <Link to='/products' className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded flex items-center">
+              <PlusIcon className="size-5 mr-1"/> Effettua un ordine
+            </Link>
+          </div>
         </div>
       </div>
       <Footer />
-    </div>
+    </>
   );
 }

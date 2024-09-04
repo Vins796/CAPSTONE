@@ -1,7 +1,6 @@
 import { useState } from "react";
-import { TrashIcon, EyeIcon, ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/24/outline";
+import { TrashIcon, ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/24/outline";
 import DeleteModal from "./DeleteOrderModal";
-import { updateOrderStatus } from "../../api/adminApi";
 import toast from 'react-hot-toast';
 
 export default function OrdersTable({ orders, handleDeleteOrder, handleRemoveOrderItem }) {
@@ -24,9 +23,6 @@ export default function OrdersTable({ orders, handleDeleteOrder, handleRemoveOrd
       handleDeleteOrder(orderToDelete);
       setIsDeleteModalOpen(false);
       setOrderToDelete(null);
-      toast.success('Ordine eliminato con successo', {
-        position: 'bottom-center',
-      });
     }
   };
 
@@ -42,23 +38,8 @@ export default function OrdersTable({ orders, handleDeleteOrder, handleRemoveOrd
       handleRemoveOrderItem(itemToRemove.orderId, itemToRemove.itemId);
       setIsRemoveItemModalOpen(false);
       setItemToRemove(null);
-      toast.success('Articolo rimosso dall\'ordine', {
-        position: 'bottom-center',
-      });
-    }
-  };
-
-  // Funzione per gestire il cambio di stato dell'ordine
-  const handleStatusChange = async (orderId, newStatus) => {
-    try {
-      await updateOrderStatus(orderId, newStatus);
-      toast.success(`Stato dell'ordine aggiornato a ${newStatus}`, {
-        position: 'bottom-center',
-      });
-    } catch (error) {
-      console.error("Errore nell'aggiornamento dello stato dell'ordine", error);
-      toast.error('Errore nell\'aggiornamento dello stato dell\'ordine', {
-        position: 'bottom-center',
+      toast.success("Articolo rimosso dall'ordine", {
+        position: window.innerWidth <= 768 ? 'bottom-center' : 'bottom-right',
       });
     }
   };
@@ -127,7 +108,6 @@ export default function OrdersTable({ orders, handleDeleteOrder, handleRemoveOrd
                   <select
                     disabled
                     value={order.status}
-                    onChange={(e) => handleStatusChange(order._id, e.target.value)}
                     className="bg-[#1b1b1b] text-white rounded p-2 text-sm"
                   >
                     <option value="pending">Inviato</option>

@@ -7,11 +7,12 @@ import { PencilIcon, UserCircleIcon, CheckIcon, XMarkIcon, CameraIcon } from "@h
 import OrdersTable from "../components/OrdersTable";
 import { Link, useLocation } from "react-router-dom";
 import toast, { Toaster } from 'react-hot-toast';
+import { PlusIcon } from "lucide-react";
 
 // Componente per i campi del profilo
 const ProfileField = ({ label, value, isEditing, onChange, placeholder }) => (
   <div className="mb-4">
-    <label className="block text-gray-300 text-sm font-bold mb-2" htmlFor={label}>
+    <label className="block text-gray-300 text-sm font-bold" htmlFor={label}>
       {label}
     </label>
     {isEditing ? (
@@ -65,7 +66,7 @@ export default function UserProfile() {
     // Verifica se c'è un messaggio di successo nell'oggetto location state
     if (location.state && location.state.orderSuccess) {
       toast.success('Ordine effettuato con successo', {
-        position: window.innerWidth <= 768 ? 'top-center' : 'bottom-right',
+        position: window.innerWidth <= 768 ? 'bottom-center' : 'bottom-right',
       });
     }
   }, [location]);
@@ -78,7 +79,9 @@ export default function UserProfile() {
         const updatedUser = await customersApi.updateProfileImage(e.target.files[0]);
         setProfile(updatedUser);
         setEditedProfile(updatedUser);
-        toast.success('Immagine del profilo aggiornata con successo');
+        toast.success('Immagine modificata con successo', {
+          position: window.innerWidth <= 768 ? 'bottom-center' : 'bottom-right',
+        });
       } catch (error) {
         setError("Errore nel caricamento dell'immagine: " + error.message);
         toast.error("Errore nel caricamento dell'immagine");
@@ -94,7 +97,9 @@ export default function UserProfile() {
       const updatedProfile = await customersApi.updateProfile(editedProfile);
       setProfile(updatedProfile);
       setIsEditing(false);
-      toast.success('Profilo aggiornato con successo');
+      toast.success('Profilo aggiornato con successo', {
+        position: window.innerWidth <= 768 ? 'bottom-center' : 'bottom-right',
+      });
     } catch (error) {
       setError("Errore nel salvataggio delle modifiche");
       toast.error("Errore nel salvataggio delle modifiche");
@@ -106,7 +111,9 @@ export default function UserProfile() {
     try {
       await deleteOrder(orderId);
       setOrders(orders.filter(order => order._id !== orderId));
-      toast.success('Ordine eliminato con successo');
+      toast.success('Ordine eliminato con successo', {
+        position: window.innerWidth <= 768 ? 'bottom-center' : 'bottom-right',
+      });
     } catch (error) {
       console.error("Errore nell'eliminazione dell'ordine", error);
       toast.error("Errore nell'eliminazione dell'ordine");
@@ -129,7 +136,9 @@ export default function UserProfile() {
           return order;
         }).filter(Boolean)
       );
-      toast.success("Articolo rimosso con successo");
+      toast.success('Articolo rimosso con successo', {
+        position: window.innerWidth <= 768 ? 'bottom-center' : 'bottom-right',
+      });
     } catch (error) {
       console.error("Errore nella rimozione dell'articolo", error);
       toast.error("Errore nella rimozione dell'articolo");
@@ -143,12 +152,21 @@ export default function UserProfile() {
   return (
     <div className="bg-[#0f0f0f] min-h-screen text-white">
       <Navbar />
-      <Toaster />
+      <Toaster
+        toastOptions={{
+          success: {
+            duration: 3000,
+          },
+          error: {
+            duration: 3000,
+          },
+        }}
+      />
       <div className="container mx-auto px-4 py-20 md:py-36">
         <div className="bg-[#141414] shadow-xl rounded-lg overflow-hidden">
           <div className="md:flex flex-col md:flex-row">
             {/* Sezione immagine profilo */}
-            <div className="md:w-full md:w-1/3 p-6 md:p-8 bg-[#1b1b1b]">
+            <div className="md:w-full p-6 md:p-8 bg-[#1b1b1b]">
               <div className="relative">
                 <div className="w-32 h-32 md:w-48 md:h-48 mx-auto rounded-full overflow-hidden bg-gray-600 flex items-center justify-center">
                   {isImageLoading ? (
@@ -174,7 +192,7 @@ export default function UserProfile() {
             </div>
 
             {/* Sezione campi profilo */}
-            <div className="md:w-full md:w-2/3 p-6 md:p-8">
+            <div className="md:w-full p-6 md:p-8">
               <div className="flex flex-col md:flex-row justify-between items-center mb-6">
                 <h3 className="text-lg md:text-xl font-semibold mb-4 md:mb-0">Informazioni Profilo</h3>
                 {!isEditing ? (
@@ -229,12 +247,14 @@ export default function UserProfile() {
             />
           ) : (
             <div className="text-center py-8 md:py-10 bg-[#141414] rounded-lg">
-              <p className="text-lg md:text-xl mb-4">Nessun ordine trovato.</p>
-              <Link to='/products' className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded">
-                Effettua un ordine
-              </Link>
+              <p className="text-lg md:text-xl">Nessun ordine trovato.</p>
             </div>
           )}
+        </div>
+        <div className="text-center mt-8 flex justify-center p-1">          
+          <Link to='/products' className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded flex items-center">
+            <PlusIcon className="size-5 mr-1"/> Effettua un ordine
+          </Link>
         </div>
       </div>
       <Footer />

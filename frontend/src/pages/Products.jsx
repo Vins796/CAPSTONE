@@ -8,6 +8,7 @@ import cookie from '/biscuits.png';
 import { motion } from 'framer-motion';
 import { useEffect, useState, useRef } from "react";
 import { productApi } from "../../api/productApi";
+import ScrollToTopButton from "../components/ScrollToTopButton";
 
 export default function Products() {
   // Stati per gestire i prodotti e le categorie
@@ -152,6 +153,7 @@ export default function Products() {
             </div>
           ))}
         </motion.section>
+        <ScrollToTopButton />
       </motion.div>
 
       {/* Footer */}

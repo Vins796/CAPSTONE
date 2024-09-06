@@ -10,6 +10,7 @@ export default {
   theme: {
     extend: {},
     fontFamily: {
+      'montserrat': ["Montserrat", 'sans-serif'],
       'sans': ['Inter', 'ui-sans-serif', 'system-ui'],
       'poppins': ['Poppins', 'sans-serif'],
       'inter': ['Inter Tight', 'sans-serif'],

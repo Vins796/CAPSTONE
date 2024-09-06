@@ -80,17 +80,6 @@ router.get('/profile/:id', authMiddleware, async (req, res) => {
     }
 });
 
-// POST /users: Crea un nuovo utente (solo per test)
-// router.post('/', async (req, res) => {
-//     try {
-//         const newUser = new User(req.body);
-//         await newUser.save();
-//         res.status(201).json(newUser);
-//     } catch (err) {
-//         res.status(400).json({ message: err.message });
-//     }
-// });
-
 // PUT /users/profile: Aggiorna il profilo dell'utente loggato
 router.patch('/profile', authMiddleware, async (req, res) => {
     try {

@@ -5,7 +5,7 @@ import { authMiddleware, isAdmin } from '../middlewares/auth.js';
 
 const router = express.Router();
 
-// GET /orders: Ritorna tutti gli ordini
+// GET /orders: Ritorna tutti gli ordini (solo per admin)
 router.get('/', authMiddleware, isAdmin, async (req, res) => {
     try {
         const orders = await Order.find().populate('user', 'name email');
@@ -22,6 +22,7 @@ router.get('/user', authMiddleware, async (req, res) => {
             .populate('items.product', 'name')
             .exec();
         
+        // Formatta gli ordini per includere i nomi dei prodotti
         const ordersWithProductNames = orders.map(order => ({
             ...order.toObject(),
             items: order.items.map(item => ({
@@ -92,30 +93,17 @@ router.post('/', authMiddleware, async (req, res) => {
     }
 });
 
-// // PUT /orders/:id: Aggiorna lo stato di un ordine (solo per admin)
-// router.put('/:id', authMiddleware, isAdmin, async (req, res) => {
-//     try {
-//         const updatedOrder = await Order.findByIdAndUpdate(req.params.id, req.body, { new: true });
-//         if (!updatedOrder) {
-//             return res.status(404).json({ message: "Ordine non trovato" });
-//         }
-//         res.json(updatedOrder);
-//     } catch(err) {
-//         res.status(400).json({ message: err.message });
-//     }
-// });
-
 // PUT /orders/:id/status: Aggiorna lo stato di un ordine (solo per admin)
 router.put('/:id/status', authMiddleware, isAdmin, async (req, res) => {
-    console.log("ricevuta richiesta di aggiornamento stato dell'ordine", req.params.id);
-    console.log("headers della richiesta", req.headers);
-    console.log("corpo della richiesta", req.body);
+    console.log("Ricevuta richiesta di aggiornamento stato dell'ordine", req.params.id);
+    console.log("Headers della richiesta", req.headers);
+    console.log("Corpo della richiesta", req.body);
     console.log("Tipo di req.body:", typeof req.body);
 
     const { status } = req.body;
     const orderId = req.params.id;
 
-    console.log("Status errato", status);
+    console.log("Status ricevuto", status);
 
     if(!status) {
         return res.status(400).json({ message: "Stato dell'ordine non specificato" })

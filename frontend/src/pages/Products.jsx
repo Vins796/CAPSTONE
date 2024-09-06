@@ -9,13 +9,14 @@ import { motion } from 'framer-motion';
 import { useEffect, useState, useRef } from "react";
 import { productApi } from "../../api/productApi";
 
-
 export default function Products() {
-
+  // Stati per gestire i prodotti e le categorie
   const [products, setProducts] = useState();
   const [categorizedProducts, setCategorizedProducts] = useState({});
+  // Ref per lo scrolling alle categorie
   const categoryRefs = useRef({});
 
+  // Funzione per recuperare i prodotti dall'API
   const fetchProducts = async() => {
     try {
       const response = await productApi.getAllProducts();
@@ -26,6 +27,7 @@ export default function Products() {
     }
   };
 
+  // Funzione per organizzare i prodotti per categoria
   const organizeProductsByCategory = (products) => {
     const categories = {};
     products.forEach(product => {
@@ -37,10 +39,12 @@ export default function Products() {
     setCategorizedProducts(categories);
   };
 
+  // Effetto per caricare i prodotti al montaggio del componente
   useEffect(() => {
     fetchProducts();
   }, []);
 
+  // Funzione per scorrere alla categoria selezionata
   const scrollToCategory = (category) => {
     categoryRefs.current[category]?.scrollIntoView({ behavior: 'smooth' });
   }
@@ -50,24 +54,28 @@ export default function Products() {
       {/* Navbar */}
       <Navbar />
 
-      {/* Hero */}
+      {/* Hero Section */}
       <motion.div 
         className='h-screen bg-gradient-to-b from-[#0a0906] via-[#0f0d09] to-[#131210] flex flex-col justify-center items-center relative'
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, ease: "easeOut" }}
       >
+        {/* Video di sfondo */}
         <video
-        autoPlay
-        loop
-        muted
-        className="absolute w-full h-full object-cover"
-        style={{ objectPosition: 'center' }}
-      >
-        <source src={productVideo} type="video/mp4" />
-        Your browser does not support the video tag.
-      </video>
-      <div className="absolute inset-0 bg-black opacity-50"></div>
+          autoPlay
+          loop
+          muted
+          className="absolute w-full h-full object-cover"
+          style={{ objectPosition: 'center' }}
+        >
+          <source src={productVideo} type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
+        {/* Overlay scuro sul video */}
+        <div className="absolute inset-0 bg-black opacity-50"></div>
+        
+        {/* Contenuto hero */}
         <motion.section
           className="absolute bottom-7 inset-x-0 md:bottom-auto md:top-1/2 md:-translate-y-1/2"
           initial={{ opacity: 0, y: 20 }}
@@ -90,24 +98,17 @@ export default function Products() {
           >
             SIAMO SEMPRE ALLA RICERCA DELLA QUALITA' PER I NOSTRI PRODOTTI
           </motion.p>
-          <motion.div 
-            className="flex gap-5 justify-center items-center mt-8"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.8, duration: 0.6 }}
-          >
-          </motion.div>
         </motion.section>
       </motion.div>
 
-      
-      {/* Card Container */}
+      {/* Sezione Categorie e Prodotti */}
       <motion.div
         className='flex flex-col justify-center items-center relative bg-[#0f0f0f]'
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, ease: "easeOut" }}
       >
+        {/* Navigazione delle categorie */}
         <motion.article
           className="bg-[#dadada] w-full"
           initial={{ opacity: 0, y: 50 }}
@@ -115,6 +116,7 @@ export default function Products() {
           transition={{ duration: 0.8, ease: "easeOut" }}
         >
           <div className="flex flex-col lg:flex-row lg:justify-center lg:items-center lg:gap-32 py-4">
+            {/* Bottoni per scrollare alle categorie */}
             <div onClick={() => scrollToCategory('Pane')} className="flex flex-col justify-center items-center cursor-pointer">
               <img src={bread} className="size-24"/>
               <span className="text-black font-poppins">PANE</span>
@@ -129,13 +131,15 @@ export default function Products() {
             </div>
           </div>
         </motion.article>
-        {/* Card */}
+        
+        {/* Sezione prodotti */}
         <motion.section
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2, duration: 0.6 }}
           className="grid grid-cols mx-auto mt-5"
         >
+          {/* Mappa attraverso le categorie e i prodotti */}
           {Object.entries(categorizedProducts).map(([category, categoryProducts]) => (
             <div key={category} ref={el => categoryRefs.current[category] = el} className="w-full mt-8">
               <h2 className="text-2xl text-left mb-2 uppercase font-poppins">{category}</h2>

@@ -22,7 +22,7 @@ const ProfileField = ({ label, value, isEditing, onChange, placeholder }) => (
         value={value || ""}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-200 leading-tight focus:outline-none focus:shadow-outline bg-gray-700"
+        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-200 leading-tight focus:outline-none focus:shadow-outline bg-[#1b1b1b]"
       />
     ) : (
       <p className="text-gray-400 py-2">{value || "Non specificato"}</p>

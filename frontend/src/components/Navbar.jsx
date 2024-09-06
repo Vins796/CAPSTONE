@@ -179,7 +179,7 @@ export default function Navbar() {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: '100%' }}
             transition={{ duration: 0.3 }}
-            className="fixed top-0 right-0 h-full w-96 bg-[#0f0f0f] shadow-lg z-50 overflow-y-auto"
+            className="fixed top-0 right-0 h-full w-full md:w-[400px] bg-[#0f0f0f] shadow-lg z-50 overflow-y-auto"
           >
             <Cart isCartOpen={isCartOpen} closeCart={() => setIsCartOpen(false)} />
           </motion.div>

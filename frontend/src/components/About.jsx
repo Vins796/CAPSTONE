@@ -49,10 +49,10 @@ const TimelineItem = ({ item, index }) => (
 
 export default function ImprovedAboutTimeline() {
   return (
-    <div id='about-section' className="bg-gradient-to-b from-amber-50 to-amber-100 py-16">
-      <div className="max-w-7xl mx-auto px-4">
+    <div id='about-section' className="bg-gradient-to-b from-amber-50 to-amber-100 pt-16 md:pt-0 min-h-screen flex items-center">
+      <div className="container mx-auto px-4">
         <motion.h2 
-          className="text-4xl font-bold font-poppins text-center mb-16 text-amber-800"
+          className="text-4xl h-14 font-bold font-poppins text-center mb-14 md:mb-16 text-amber-800"
           initial={{ opacity: 0, y: -50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}

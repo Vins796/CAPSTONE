@@ -39,7 +39,7 @@ export default function Hero() {
           LA TRADIZIONE DEL NOSTRO TERRITORIO
         </motion.p>
         <motion.h1 
-          className='md:hidden text-transparent bg-clip-text bg-gradient-to-r from-slate-400 via-gray-300 to-gray-400 text-5xl md:text-5xl font-poppins font-semibold uppercase mb-4'
+          className='md:hidden bg-gradient-to-r from-amber-700 via-amber-500 to-yellow-100 bg-clip-text text-transparent text-5xl md:text-5xl font-poppins font-semibold uppercase mb-4'
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4, duration: 0.6 }}
@@ -47,7 +47,7 @@ export default function Hero() {
           Il Forno <br /> di Quartiere
         </motion.h1>
         <motion.h1 
-          className='hidden md:block text-transparent bg-clip-text bg-gradient-to-r from-slate-400 via-gray-300 to-gray-400 text-5xl md:text-5xl font-poppins font-semibold uppercase mb-4'
+          className='hidden md:block bg-gradient-to-r from-amber-700 via-amber-500 to-yellow-200 bg-clip-text text-transparent text-5xl md:text-5xl font-poppins font-semibold uppercase mb-4'
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4, duration: 0.6 }}

@@ -78,13 +78,13 @@ export default function Products() {
         
         {/* Contenuto hero */}
         <motion.section
-          className="absolute bottom-7 inset-x-0 md:bottom-auto md:top-1/2 md:-translate-y-1/2"
+          className="absolute bottom-[10%] inset-x-0 md:bottom-auto md:top-1/2 md:-translate-y-1/2"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2, duration: 0.6 }}
         >
           <motion.h1 
-            className='text-transparent bg-clip-text bg-gradient-to-r from-slate-300 via-gray-300 to-gray-400 text-3xl md:text-5xl font-poppins font-bold mb-3 mx-auto text-center'
+            className='bg-gradient-to-r from-amber-700 via-amber-500 to-yellow-200 bg-clip-text text-transparent text-5xl md:text-5xl font-poppins font-semibold mb-3 mx-auto text-center'
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4, duration: 0.6 }}
@@ -111,7 +111,7 @@ export default function Products() {
       >
         {/* Navigazione delle categorie */}
         <motion.article
-          className="bg-[#dadada] w-full"
+          className="bg-amber-100 w-full"
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}

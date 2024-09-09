@@ -26,11 +26,11 @@
 - Framer Motion per le animazioni
 - Tailwind CSS per lo styling
 - Axios per le chiamate API
-- Auth0 React SDK per l'autenticazione
+- Auth0 per l'autenticazione
 
 ### Backend
 - Node.js con Express.js
-- MongoDB con Mongoose ORM
+- MongoDB con Mongoose 
 - JWT per l'autenticazione interna
 - Multer per la gestione del caricamento file
 - Cors per la gestione delle richieste cross-origin
@@ -59,7 +59,7 @@
 4. **Area Amministrativa**
    - Dashboard per la gestione dei prodotti
    - Visualizzazione e gestione degli ordini
-   - Analisi delle vendite (da implementare)
+   - Analisi delle vendite
 
 5. **Responsive Design**
    - Layout adattivo per desktop, tablet e smartphone
@@ -72,10 +72,24 @@
 ## Installazione e Setup
 
 1. Clona il repository
+```sh
+git clone https://github.com/tuousername/il-forno.git
+```
 2. Installa le dipendenze per il frontend e il backend
+```sh
+npm install
+```
 3. Configura le variabili d'ambiente
 4. Avvia il server backend
+```sh
+cd backend
+node server.js
+```
 5. Avvia l'applicazione frontend
+```sh
+cd frontend
+npm run dev
+```
 
 ## Sviluppi Futuri
 - Implementazione di un sistema di pagamento reale
